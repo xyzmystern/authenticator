@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Local Authenticator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:#0b1020;color:#fff}
+.wrap{max-width:600px;margin:auto;padding:24px 16px}
+.card{background:#151c2f;border:1px solid #29334d;border-radius:18px;padding:18px;margin:14px 0}
+input{width:100%;padding:13px;margin:6px 0 12px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:white;font-size:16px}
+button{border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
+.code{font:800 34px monospace;letter-spacing:5px;margin-top:12px}
+.timer{color:#94a3b8;margin-top:8px}
+.bar{height:5px;background:#29334d;margin-top:12px;border-radius:9px}
+.bar span{display:block;height:100%;background:white}
+.small{color:#94a3b8;font-size:12px;line-height:1.5}
+.delete{background:#3b1820;color:#fecaca;margin-top:12px}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<h1>🔐 Local Authenticator</h1>
+<p class="small">TOTP codes are generated locally in your browser.</p>
+
+<div class="card">
+<h2>Add account</h2>
+
+<input id="issuer" placeholder="Service e.g. Discord">
+<input id="account" placeholder="Account name">
+<input id="secret" placeholder="TOTP secret">
+
+<button onclick="addAccount()">Add account</button>
+
+<p class="small">
+Your TOTP secret is sensitive. Never share it with anyone.
+</p>
+</div>
+
+<div id="accounts"></div>
+
+</div>
+
+<script>
+
+const STORAGE_KEY = "local_authenticator_accounts";
+
+let accounts =
+JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+
+function save(){
+
+localStorage.setItem(
+STORAGE_KEY,
+JSON.stringify(accounts)
+);
+
+}
+
+
+function base32ToBytes(secret){
+
+secret = secret
+.toUpperCase()
+.replace(/[\s-]/g,"")
+.replace(/=+$/,"");
+
+const alphabet =
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+let bits = "";
+
+for(const char of secret){
+
+const value =
+alphabet.indexOf(char);
+
+if(value < 0)
+throw new Error("Invalid Base32 secret.");
+
+bits +=
+value.toString(2).padStart(5,"0");
+
+}
+
+const bytes = [];
+
+for(
+let i=0;
+i + 8 <= bits.length;
+i += 8
+){
+
+bytes.push(
+parseInt(bits.slice(i,i+8),2)
+);
+
+}
+
+return new Uint8Array(bytes);
+
+}
+
+
+function counterBytes(counter){
+
+const buffer =
+new ArrayBuffer(8);
+
+const view =
+new DataView(buffer);
+
+view.setUint32(
+0,
+Math.floor(counter / 0x100000000)
+);
+
+view.setUint32(
+4,
+counter >>> 0
+);
+
+return buffer;
+
+}
+
+
+async function hotp(secret,counter){
+
+const key =
+await crypto.subtle.importKey(
+"raw",
+base32ToBytes(secret),
+{
+name:"HMAC",
+hash:"SHA-1"
+},
+false,
+["sign"]
+);
+
+const signature =
+new Uint8Array(
+await crypto.subtle.sign(
+"HMAC",
+key,
+counterBytes(counter)
+)
+);
+
+const offset =
+signature[signature.length-1] & 15;
+
+const number =
+(
+((signature[offset] & 127) << 24) |
+((signature[offset+1] & 255) << 16) |
+((signature[offset+2] & 255) << 8) |
+(signature[offset+3] & 255)
+);
+
+return String(
+number % 1000000
+).padStart(6,"0");
+
+}
+
+
+async function generateCode(secret){
+
+const counter =
+Math.floor(
+Date.now() / 1000 / 30
+);
+
+return hotp(secret,counter);
+
+}
+
+
+function escapeHTML(text){
+
+return String(text).replace(
+/[&<>"']/g,
+char => ({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[char])
+);
+
+}
+
+
+async function render(){
+
+const container =
+document.getElementById("accounts");
+
+if(accounts.length === 0){
+
+container.innerHTML =
+'<div class="card"><p class="small">No accounts added yet.</p></div>';
+
+return;
+
+}
+
+container.innerHTML =
+accounts.map((account,index)=>`
+
+<div class="card">
+
+<strong>
+${escapeHTML(account.account || "Account")}
+</strong>
+
+<p class="small">
+${escapeHTML(account.issuer || "Authenticator")}
+</p>
+
+<div
+class="code"
+id="code-${index}">
+------
+</div>
+
+<div
+class="timer"
+id="timer-${index}">
+Loading...
+</div>
+
+<div class="bar">
+<span id="bar-${index}"></span>
+</div>
+
+<button
+class="delete"
+onclick="deleteAccount(${index})">
+Delete
+</button>
+
+</div>
+
+`).join("");
+
+await updateCodes();
+
+}
+
+
+async function updateCodes(){
+
+const seconds =
+Math.floor(Date.now()/1000);
+
+const remaining =
+30 - (seconds % 30);
+
+const percentage =
+(remaining / 30) * 100;
+
+for(
+let i=0;
+i<accounts.length;
+i++
+){
+
+try{
+
+const code =
+await generateCode(
+accounts[i].secret
+);
+
+document.getElementById(
+`code-${i}`
+).textContent = code;
+
+document.getElementById(
+`timer-${i}`
+).textContent =
+`Changes in ${remaining}s`;
+
+document.getElementById(
+`bar-${i}`
+).style.width =
+percentage + "%";
+
+}catch(error){
+
+document.getElementById(
+`code-${i}`
+).textContent =
+"ERROR";
+
+document.getElementById(
+`timer-${i}`
+).textContent =
+"Invalid secret";
+
+}
+
+}
+
+}
+
+
+async function addAccount(){
+
+const issuer =
+document.getElementById("issuer")
+.value.trim();
+
+const account =
+document.getElementById("account")
+.value.trim();
+
+const secret =
+document.getElementById("secret")
+.value
+.trim()
+.replace(/\s+/g,"")
+.toUpperCase();
+
+if(!secret){
+
+alert("Enter a TOTP secret.");
+
+return;
+
+}
+
+try{
+
+base32ToBytes(secret);
+
+}catch(error){
+
+alert(error.message);
+
+return;
+
+}
+
+accounts.push({
+issuer,
+account,
+secret
+});
+
+save();
+
+document.getElementById(
+"issuer"
+).value = "";
+
+document.getElementById(
+"account"
+).value = "";
+
+document.getElementById(
+"secret"
+).value = "";
+
+await render();
+
+}
+
+
+function deleteAccount(index){
+
+if(
+confirm(
+"Delete this account?"
+)
+){
+
+accounts.splice(index,1);
+
+save();
+
+render();
+
+}
+
+}
+
+
+render();
+
+setInterval(
+updateCodes,
+1000
+);
+
+</script>
+
+</body>
+  </html>
