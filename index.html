@@ -3,271 +3,291 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b1020">
-<title>Secure Authenticator</title>
+<meta name="theme-color" content="#111827">
+<title>My Authenticator</title>
 
 <style>
-*{box-sizing:border-box}
-
-body{
- margin:0;
- background:#0b1020;
- color:#f8fafc;
- font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+* {
+  box-sizing: border-box;
 }
 
-.container{
- max-width:650px;
- margin:auto;
- padding:22px 15px 50px
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: #f8fafc;
 }
 
-h1{margin:0;font-size:30px}
-.subtitle{color:#94a3b8;margin-top:5px}
-
-.card{
- background:#151c2f;
- border:1px solid #29334d;
- border-radius:18px;
- padding:18px;
- margin-top:16px
+.container {
+  width: min(94%, 600px);
+  margin: 0 auto;
+  padding: 24px 0 50px;
 }
 
-input{
- width:100%;
- padding:13px;
- margin:6px 0 12px;
- border-radius:10px;
- border:1px solid #334155;
- background:#0f172a;
- color:white;
- font-size:16px
+h1 {
+  margin-bottom: 6px;
 }
 
-button{
- border:0;
- border-radius:10px;
- padding:12px 15px;
- font-weight:700;
- cursor:pointer;
- margin:4px
+.subtitle {
+  color: #94a3b8;
+  margin-top: 0;
 }
 
-.primary{background:white;color:#0f172a}
-.secondary{background:#263149;color:white}
-.danger{background:#421b24;color:#fecaca}
-
-.hidden{display:none}
-
-.account{
- display:flex;
- align-items:center;
- gap:13px
+.card {
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.2);
 }
 
-.logo{
- width:48px;
- height:48px;
- border-radius:12px;
- display:flex;
- align-items:center;
- justify-content:center;
- background:#263149;
- font-size:24px;
- overflow:hidden
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 7px 0;
+  border: 1px solid #475569;
+  border-radius: 10px;
+  background: #0f172a;
+  color: white;
 }
 
-.logo img{
- width:100%;
- height:100%;
- object-fit:cover
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin: 5px 3px 5px 0;
+  cursor: pointer;
+  background: #334155;
+  color: white;
 }
 
-.name{
- font-size:17px;
- font-weight:700
+button:hover {
+  background: #475569;
 }
 
-.issuer{
- color:#94a3b8;
- font-size:13px
+.primary {
+  background: #2563eb;
 }
 
-.code{
- font:800 34px monospace;
- letter-spacing:5px;
- margin-top:14px
+.primary:hover {
+  background: #1d4ed8;
 }
 
-.timer{
- color:#94a3b8;
- font-size:13px;
- margin-top:6px
+.danger {
+  background: #991b1b;
 }
 
-.progress{
- height:5px;
- background:#29334d;
- border-radius:10px;
- margin-top:10px;
- overflow:hidden
+.account {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.progress span{
- display:block;
- height:100%;
- background:white
+.account-image {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: #334155;
+  flex-shrink: 0;
 }
 
-.small{
- color:#94a3b8;
- font-size:12px;
- line-height:1.5
+.account-info {
+  flex: 1;
+  min-width: 0;
 }
 
-.buttons{
- display:flex;
- flex-wrap:wrap;
- margin-top:10px
+.account-name {
+  font-size: 17px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
 }
 
-#unlockScreen{
- position:fixed;
- inset:0;
- background:#0b1020;
- display:flex;
- align-items:center;
- justify-content:center;
- padding:20px;
- z-index:10
+.issuer {
+  color: #94a3b8;
+  font-size: 13px;
+  margin-top: 3px;
 }
 
-#unlockBox{
- max-width:420px;
- width:100%
+.code {
+  font-size: 32px;
+  letter-spacing: 5px;
+  font-weight: bold;
+  margin-top: 10px;
 }
 
-.notice{
- padding:12px;
- border-radius:10px;
- background:#1e293b;
- color:#cbd5e1;
- font-size:13px;
- margin:10px 0
+.timer {
+  color: #94a3b8;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.progress {
+  width: 100%;
+  height: 5px;
+  background: #334155;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #3b82f6;
+  width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.image-preview {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  object-fit: cover;
+  display: none;
+  margin: 8px 0;
+  background: #334155;
+}
+
+.small {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.actions {
+  margin-top: 12px;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #334155;
+  margin: 18px 0;
 }
 </style>
 </head>
 
 <body>
 
-<div id="unlockScreen">
- <div id="unlockBox" class="card">
-  <h1>🔐 Authenticator</h1>
-  <p class="subtitle">
-   Your vault is encrypted locally.
-  </p>
-
-  <div id="firstSetup">
-   <p>Create a password to protect your authenticator.</p>
-
-   <input id="newPassword"
-          type="password"
-          placeholder="Create password">
-
-   <input id="confirmPassword"
-          type="password"
-          placeholder="Confirm password">
-
-   <button class="primary" onclick="createVault()">
-    Create encrypted vault
-   </button>
-  </div>
-
-  <div id="existingVault" class="hidden">
-   <p>Enter your password to unlock your vault.</p>
-
-   <input id="unlockPassword"
-          type="password"
-          placeholder="Vault password">
-
-   <button class="primary" onclick="unlockVault()">
-    Unlock
-   </button>
-  </div>
-
-  <div id="unlockMessage" class="small"></div>
- </div>
-</div>
-
-
 <div class="container">
 
-<h1>🔐 Secure Authenticator</h1>
+  <h1>🔐 My Authenticator</h1>
+  <p class="subtitle">Private encrypted TOTP authenticator</p>
 
-<p class="subtitle">
- Local TOTP authenticator
-</p>
+  <!-- LOCK SCREEN -->
+  <div id="lockScreen" class="card">
+    <h2 id="lockTitle">Create your vault</h2>
 
+    <p class="small">
+      Your authenticator data is encrypted in your browser.
+      The password is never stored.
+    </p>
 
-<div class="card">
+    <input
+      id="vaultPassword"
+      type="password"
+      placeholder="Vault password"
+      autocomplete="new-password"
+    >
 
-<h2>Add account</h2>
+    <button class="primary" onclick="unlockVault()">
+      Unlock / Create
+    </button>
 
-<input id="issuer"
-       placeholder="Service e.g. Discord">
-
-<input id="account"
-       placeholder="Account name">
-
-<input id="secret"
-       placeholder="TOTP secret">
-
-<button class="primary" onclick="addAccount()">
- Add account
-</button>
-
-<button class="secondary" onclick="showQRInstructions()">
- 📷 QR scanner
-</button>
-
-<p class="small">
- TOTP secrets are encrypted before being stored locally.
-</p>
-
-</div>
+    <p id="lockMessage" class="small"></p>
+  </div>
 
 
-<div class="card">
+  <!-- MAIN APP -->
+  <div id="app" class="hidden">
 
-<h2>Backup</h2>
+    <div class="card">
 
-<p class="small">
- Export creates an encrypted backup file. You need your vault
- password to restore it.
-</p>
+      <button class="primary" onclick="showAddAccount()">
+        ＋ Add Account
+      </button>
 
-<button class="secondary" onclick="exportBackup()">
- 💾 Export encrypted backup
-</button>
+      <button onclick="exportBackup()">
+        📦 Export Backup
+      </button>
 
-<button class="secondary" onclick="document.getElementById('backupFile').click()">
- 📥 Import encrypted backup
-</button>
+      <button onclick="document.getElementById('backupFile').click()">
+        📥 Import Backup
+      </button>
 
-<input id="backupFile"
-       type="file"
-       accept=".auth,.json"
-       style="display:none"
-       onchange="importBackup(event)">
+      <input
+        id="backupFile"
+        type="file"
+        accept=".auth,.json"
+        class="hidden"
+        onchange="importBackup(event)"
+      >
 
-<button class="danger" onclick="lockVault()">
- 🔒 Lock
-</button>
+      <button onclick="lockVault()">
+        🔒 Lock
+      </button>
 
-</div>
+    </div>
 
 
-<div id="accounts"></div>
+    <!-- ADD ACCOUNT -->
+    <div id="addAccountCard" class="card hidden">
+
+      <h2>Add Account</h2>
+
+      <input
+        id="issuer"
+        placeholder="Issuer (e.g. Discord)"
+      >
+
+      <input
+        id="accountName"
+        placeholder="Account name"
+      >
+
+      <input
+        id="secret"
+        placeholder="TOTP secret"
+        autocomplete="off"
+      >
+
+      <p class="small">
+        Enter the Base32 TOTP secret provided by the service.
+      </p>
+
+      <hr>
+
+      <h3>Custom Image</h3>
+
+      <input
+        id="accountImage"
+        type="file"
+        accept="image/*"
+        onchange="previewImage(event)"
+      >
+
+      <img id="imagePreview" class="image-preview">
+
+      <br>
+
+      <button class="primary" onclick="addAccount()">
+        Add Account
+      </button>
+
+      <button onclick="hideAddAccount()">
+        Cancel
+      </button>
+
+      <p id="addMessage" class="small"></p>
+
+    </div>
+
+
+    <!-- ACCOUNTS -->
+    <div id="accounts"></div>
+
+  </div>
 
 </div>
 
@@ -275,422 +295,938 @@ button{
 <script>
 
 /* =========================================================
-   STORAGE
-========================================================= */
-
-const VAULT_KEY = "secure_authenticator_vault_v1";
+   AUTHENTICATOR
+   ========================================================= */
 
 let vault = null;
-let password = null;
-let accounts = [];
+let vaultPassword = null;
+let vaultSalt = null;
 
 
 /* =========================================================
-   CRYPTO HELPERS
-========================================================= */
+   BASIC HELPERS
+   ========================================================= */
 
-function randomBytes(length){
- return crypto.getRandomValues(new Uint8Array(length));
+function bytesToBase64(bytes) {
+  let binary = "";
+
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+
+  return btoa(binary);
 }
 
 
-function bytesToBase64(bytes){
- let binary = "";
- bytes.forEach(b => binary += String.fromCharCode(b));
- return btoa(binary);
+function base64ToBytes(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return bytes;
 }
 
 
-function base64ToBytes(base64){
- const binary = atob(base64);
- const bytes = new Uint8Array(binary.length);
-
- for(let i=0;i<binary.length;i++){
-  bytes[i] = binary.charCodeAt(i);
- }
-
- return bytes;
-}
-
-
-async function deriveKey(password,salt){
-
- const material =
- await crypto.subtle.importKey(
-  "raw",
-  new TextEncoder().encode(password),
-  "PBKDF2",
-  false,
-  ["deriveKey"]
- );
-
- return crypto.subtle.deriveKey(
-  {
-   name:"PBKDF2",
-   salt,
-   iterations:310000,
-   hash:"SHA-256"
-  },
-  material,
-  {
-   name:"AES-GCM",
-   length:256
-  },
-  false,
-  ["encrypt","decrypt"]
- );
-
-}
-
-
-async function encryptData(data,key){
-
- const iv = randomBytes(12);
-
- const encrypted =
- await crypto.subtle.encrypt(
-  {
-   name:"AES-GCM",
-   iv
-  },
-  key,
-  new TextEncoder().encode(
-   JSON.stringify(data)
-  )
- );
-
- return {
-  iv:bytesToBase64(iv),
-  data:bytesToBase64(
-   new Uint8Array(encrypted)
-  )
- };
-
-}
-
-
-async function decryptData(payload,key){
-
- const decrypted =
- await crypto.subtle.decrypt(
-  {
-   name:"AES-GCM",
-   iv:base64ToBytes(payload.iv)
-  },
-  key,
-  base64ToBytes(payload.data)
- );
-
- return JSON.parse(
-  new TextDecoder().decode(decrypted)
- );
-
+function randomBytes(length) {
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return bytes;
 }
 
 
 /* =========================================================
-   VAULT
-========================================================= */
+   PASSWORD → ENCRYPTION KEY
+   ========================================================= */
 
-async function createVault(){
+async function deriveKey(password, salt) {
 
- const p =
- document.getElementById("newPassword").value;
+  const encoder = new TextEncoder();
 
- const confirm =
- document.getElementById("confirmPassword").value;
-
- if(p.length < 10){
-  showUnlockMessage(
-   "Use a password of at least 10 characters."
+  const passwordKey = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(password),
+    "PBKDF2",
+    false,
+    ["deriveKey"]
   );
-  return;
- }
 
- if(p !== confirm){
-  showUnlockMessage(
-   "Passwords do not match."
+  return crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: 310000,
+      hash: "SHA-256"
+    },
+    passwordKey,
+    {
+      name: "AES-GCM",
+      length: 256
+    },
+    false,
+    ["encrypt", "decrypt"]
   );
-  return;
- }
-
- const salt = randomBytes(16);
-
- const key =
- await deriveKey(p,salt);
-
- const encrypted =
- await encryptData([],key);
-
- vault = {
-  version:1,
-  salt:bytesToBase64(salt),
-  encrypted
- };
-
- localStorage.setItem(
-  VAULT_KEY,
-  JSON.stringify(vault)
- );
-
- password = p;
- accounts = [];
-
- unlockScreen(false);
- render();
-
 }
 
 
-async function unlockVault(){
+/* =========================================================
+   ENCRYPT VAULT
+   ========================================================= */
 
- const p =
- document.getElementById("unlockPassword").value;
+async function encryptVault(data, password, salt) {
 
- try{
+  const key = await deriveKey(password, salt);
+
+  const iv = randomBytes(12);
+
+  const encoded = new TextEncoder().encode(
+    JSON.stringify(data)
+  );
+
+  const encrypted = await crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv: iv
+    },
+    key,
+    encoded
+  );
+
+  return {
+    salt: bytesToBase64(salt),
+    iv: bytesToBase64(iv),
+    data: bytesToBase64(new Uint8Array(encrypted))
+  };
+}
+
+
+/* =========================================================
+   DECRYPT VAULT
+   ========================================================= */
+
+async function decryptVault(encryptedVault, password) {
+
+  const salt = base64ToBytes(encryptedVault.salt);
+  const iv = base64ToBytes(encryptedVault.iv);
+  const encrypted = base64ToBytes(encryptedVault.data);
+
+  const key = await deriveKey(password, salt);
+
+  const decrypted = await crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv: iv
+    },
+    key,
+    encrypted
+  );
+
+  const text = new TextDecoder().decode(decrypted);
+
+  return JSON.parse(text);
+}
+
+
+/* =========================================================
+   SAVE
+   ========================================================= */
+
+async function saveVault() {
+
+  if (!vault || !vaultPassword || !vaultSalt) {
+    return;
+  }
+
+  const encrypted = await encryptVault(
+    vault,
+    vaultPassword,
+    vaultSalt
+  );
+
+  localStorage.setItem(
+    "encryptedAuthenticatorVault",
+    JSON.stringify(encrypted)
+  );
+}
+
+
+/* =========================================================
+   UNLOCK / CREATE
+   ========================================================= */
+
+async function unlockVault() {
+
+  const password =
+    document.getElementById("vaultPassword").value;
+
+  const message =
+    document.getElementById("lockMessage");
+
+  if (password.length < 10) {
+
+    message.textContent =
+      "Password must be at least 10 characters.";
+
+    return;
+  }
+
 
   const stored =
-  JSON.parse(
-   localStorage.getItem(VAULT_KEY)
-  );
+    localStorage.getItem(
+      "encryptedAuthenticatorVault"
+    );
 
-  const salt =
-  base64ToBytes(stored.salt);
 
-  const key =
-  await deriveKey(p,salt);
+  try {
 
-  accounts =
-  await decryptData(
-   stored.encrypted,
-   key
-  );
+    if (stored) {
 
-  vault = stored;
-  password = p;
+      const encrypted =
+        JSON.parse(stored);
 
-  unlockScreen(false);
+      vault =
+        await decryptVault(
+          encrypted,
+          password
+        );
 
-  render();
+      vaultSalt =
+        base64ToBytes(encrypted.salt);
 
- }catch{
+    } else {
 
-  showUnlockMessage(
-   "Incorrect password or damaged vault."
-  );
+      vault = {
+        accounts: []
+      };
 
- }
+      vaultSalt =
+        randomBytes(16);
+
+      await saveVault();
+    }
+
+
+    vaultPassword = password;
+
+    document.getElementById(
+      "lockScreen"
+    ).classList.add("hidden");
+
+    document.getElementById(
+      "app"
+    ).classList.remove("hidden");
+
+    document.getElementById(
+      "vaultPassword"
+    ).value = "";
+
+    renderAccounts();
+
+  } catch (error) {
+
+    message.textContent =
+      "Incorrect password or damaged vault.";
+
+    console.error(error);
+  }
+}
+
+
+/* =========================================================
+   LOCK
+   ========================================================= */
+
+function lockVault() {
+
+  vault = null;
+  vaultPassword = null;
+  vaultSalt = null;
+
+  document.getElementById(
+    "app"
+  ).classList.add("hidden");
+
+  document.getElementById(
+    "lockScreen"
+  ).classList.remove("hidden");
+
+  document.getElementById(
+    "lockTitle"
+  ).textContent = "Unlock your vault";
+
+  document.getElementById(
+    "lockMessage"
+  ).textContent = "";
+}
+
+
+/* =========================================================
+   ADD ACCOUNT UI
+   ========================================================= */
+
+function showAddAccount() {
+
+  document.getElementById(
+    "addAccountCard"
+  ).classList.remove("hidden");
 
 }
 
 
-async function saveVault(){
+function hideAddAccount() {
 
- const salt =
- base64ToBytes(vault.salt);
+  document.getElementById(
+    "addAccountCard"
+  ).classList.add("hidden");
 
- const key =
- await deriveKey(password,salt);
+  document.getElementById(
+    "issuer"
+  ).value = "";
 
- vault.encrypted =
- await encryptData(accounts,key);
+  document.getElementById(
+    "accountName"
+  ).value = "";
 
- localStorage.setItem(
-  VAULT_KEY,
-  JSON.stringify(vault)
- );
+  document.getElementById(
+    "secret"
+  ).value = "";
 
+  document.getElementById(
+    "accountImage"
+  ).value = "";
+
+  document.getElementById(
+    "imagePreview"
+  ).style.display = "none";
+
+  document.getElementById(
+    "addMessage"
+  ).textContent = "";
 }
 
 
-function lockVault(){
+/* =========================================================
+   IMAGE PREVIEW
+   ========================================================= */
 
- password = null;
- accounts = [];
+function previewImage(event) {
 
- document.getElementById(
-  "unlockPassword"
- ).value = "";
+  const file = event.target.files[0];
 
- unlockScreen(true);
+  if (!file) return;
 
+
+  if (!file.type.startsWith("image/")) {
+
+    alert("Please select an image.");
+
+    event.target.value = "";
+
+    return;
+  }
+
+
+  /*
+    Limit image size before converting it.
+
+    This keeps the encrypted vault from becoming
+    unnecessarily large.
+  */
+
+  if (file.size > 2 * 1024 * 1024) {
+
+    alert("Please choose an image smaller than 2 MB.");
+
+    event.target.value = "";
+
+    return;
+  }
+
+
+  const reader = new FileReader();
+
+  reader.onload = function() {
+
+    const preview =
+      document.getElementById(
+        "imagePreview"
+      );
+
+    preview.src = reader.result;
+
+    preview.style.display = "block";
+  };
+
+  reader.readAsDataURL(file);
 }
 
 
-function unlockScreen(show){
+/* =========================================================
+   ADD ACCOUNT
+   ========================================================= */
 
- document.getElementById(
-  "unlockScreen"
- ).style.display =
- show ? "flex" : "none";
+async function addAccount() {
 
- const exists =
- localStorage.getItem(VAULT_KEY);
+  const issuer =
+    document.getElementById("issuer")
+    .value.trim();
 
- document.getElementById(
-  "firstSetup"
- ).style.display =
- exists ? "none" : "block";
+  const accountName =
+    document.getElementById("accountName")
+    .value.trim();
 
- document.getElementById(
-  "existingVault"
- ).style.display =
- exists ? "block" : "none";
+  const secret =
+    document.getElementById("secret")
+    .value
+    .replace(/\s+/g, "")
+    .toUpperCase();
 
+  const imageFile =
+    document.getElementById("accountImage")
+    .files[0];
+
+
+  const message =
+    document.getElementById("addMessage");
+
+
+  if (!accountName) {
+
+    message.textContent =
+      "Enter an account name.";
+
+    return;
+  }
+
+
+  if (!secret) {
+
+    message.textContent =
+      "Enter a TOTP secret.";
+
+    return;
+  }
+
+
+  if (!/^[A-Z2-7]+=*$/.test(secret)) {
+
+    message.textContent =
+      "That doesn't look like a valid Base32 secret.";
+
+    return;
+  }
+
+
+  let image = "";
+
+
+  if (imageFile) {
+
+    if (!imageFile.type.startsWith("image/")) {
+
+      message.textContent =
+        "Please choose an image.";
+
+      return;
+    }
+
+
+    if (imageFile.size > 2 * 1024 * 1024) {
+
+      message.textContent =
+        "Image must be smaller than 2 MB.";
+
+      return;
+    }
+
+
+    image =
+      await fileToDataURL(imageFile);
+  }
+
+
+  vault.accounts.push({
+
+    id:
+      crypto.randomUUID(),
+
+    issuer:
+      issuer || "Authenticator",
+
+    accountName:
+      accountName,
+
+    secret:
+      secret,
+
+    image:
+      image
+
+  });
+
+
+  await saveVault();
+
+  hideAddAccount();
+
+  renderAccounts();
 }
 
 
-function showUnlockMessage(message){
+/* =========================================================
+   FILE → DATA URL
+   ========================================================= */
 
- document.getElementById(
-  "unlockMessage"
- ).textContent = message;
+function fileToDataURL(file) {
+
+  return new Promise((resolve, reject) => {
+
+    const reader =
+      new FileReader();
+
+    reader.onload =
+      () => resolve(reader.result);
+
+    reader.onerror =
+      reject;
+
+    reader.readAsDataURL(file);
+
+  });
+}
+
+
+/* =========================================================
+   DELETE ACCOUNT
+   ========================================================= */
+
+async function deleteAccount(id) {
+
+  if (!confirm("Delete this account?")) {
+    return;
+  }
+
+
+  vault.accounts =
+    vault.accounts.filter(
+      account => account.id !== id
+    );
+
+
+  await saveVault();
+
+  renderAccounts();
+}
+
+
+/* =========================================================
+   DEFAULT ACCOUNT ICON
+   ========================================================= */
+
+function getDefaultIcon(issuer) {
+
+  const name =
+    issuer.toLowerCase();
+
+  if (name.includes("discord"))
+    return "💬";
+
+  if (name.includes("google"))
+    return "G";
+
+  if (name.includes("github"))
+    return "🐙";
+
+  if (name.includes("microsoft"))
+    return "▦";
+
+  if (name.includes("apple"))
+    return "";
+
+  if (name.includes("amazon"))
+    return "📦";
+
+  if (name.includes("meta"))
+    return "Ⓜ";
+
+  return "🔐";
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   RENDER ACCOUNTS
+   ========================================================= */
+
+function renderAccounts() {
+
+  const container =
+    document.getElementById("accounts");
+
+  container.innerHTML = "";
+
+
+  if (!vault || vault.accounts.length === 0) {
+
+    container.innerHTML = `
+      <div class="card">
+        <p>No accounts yet.</p>
+        <p class="small">
+          Add an account to start using your authenticator.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  vault.accounts.forEach(account => {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "card";
+
+
+    const imageHTML =
+      account.image
+
+      ? `<img
+          class="account-image"
+          src="${escapeHTML(account.image)}"
+          alt=""
+        >`
+
+      : `<div
+          class="account-image"
+          style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:26px;
+          "
+        >
+          ${escapeHTML(
+            getDefaultIcon(account.issuer)
+          )}
+        </div>`;
+
+
+    card.innerHTML = `
+
+      <div class="account">
+
+        ${imageHTML}
+
+        <div class="account-info">
+
+          <div class="account-name">
+            ${escapeHTML(account.accountName)}
+          </div>
+
+          <div class="issuer">
+            ${escapeHTML(account.issuer)}
+          </div>
+
+          <div
+            class="code"
+            id="code-${account.id}"
+          >
+            ------ 
+          </div>
+
+          <div
+            class="timer"
+            id="timer-${account.id}"
+          >
+            Loading...
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="progress">
+        <div
+          class="progress-bar"
+          id="progress-${account.id}"
+        ></div>
+      </div>
+
+
+      <div class="actions">
+
+        <button
+          class="primary"
+          onclick="copyCode('${account.id}')"
+        >
+          Copy Code
+        </button>
+
+        <button
+          class="danger"
+          onclick="deleteAccount('${account.id}')"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    `;
+
+
+    container.appendChild(card);
+
+    updateAccountCode(account);
+
+  });
 
 }
 
 
 /* =========================================================
-   BASE32
-========================================================= */
+   BASE32 DECODER
+   ========================================================= */
 
-function base32ToBytes(secret){
+function base32ToBytes(base32) {
 
- secret =
- secret
- .toUpperCase()
- .replace(/[\s-]/g,"")
- .replace(/=+$/,"");
+  const alphabet =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
- const alphabet =
- "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = "";
+  let output = [];
 
- let bits = "";
+  base32 =
+    base32
+      .replace(/=+$/, "")
+      .replace(/\s/g, "")
+      .toUpperCase();
 
- for(const char of secret){
 
-  const value =
-  alphabet.indexOf(char);
+  for (const char of base32) {
 
-  if(value < 0)
-   throw new Error(
-    "Invalid Base32 secret."
-   );
+    const value =
+      alphabet.indexOf(char);
 
-  bits +=
-  value.toString(2).padStart(5,"0");
+    if (value === -1) {
+      throw new Error("Invalid Base32");
+    }
 
- }
+    bits +=
+      value
+        .toString(2)
+        .padStart(5, "0");
+  }
 
- const bytes = [];
 
- for(
-  let i=0;
-  i+8<=bits.length;
-  i+=8
- ){
+  for (
+    let i = 0;
+    i + 8 <= bits.length;
+    i += 8
+  ) {
 
-  bytes.push(
-   parseInt(
-    bits.slice(i,i+8),
-    2
-   )
-  );
+    output.push(
+      parseInt(
+        bits.slice(i, i + 8),
+        2
+      )
+    );
 
- }
+  }
 
- return new Uint8Array(bytes);
 
+  return new Uint8Array(output);
 }
 
 
 /* =========================================================
    TOTP
-========================================================= */
+   ========================================================= */
 
-function counterBytes(counter){
+async function generateTOTP(secret) {
 
- const buffer =
- new ArrayBuffer(8);
+  const keyBytes =
+    base32ToBytes(secret);
 
- const view =
- new DataView(buffer);
 
- view.setUint32(
- 0,
- Math.floor(
-  counter / 0x100000000
- )
- );
+  const counter =
+    Math.floor(
+      Date.now() / 1000 / 30
+    );
 
- view.setUint32(
- 4,
- counter >>> 0
- );
 
- return buffer;
+  const counterBytes =
+    new ArrayBuffer(8);
 
+  const view =
+    new DataView(counterBytes);
+
+
+  const high =
+    Math.floor(
+      counter / 0x100000000
+    );
+
+  const low =
+    counter >>> 0;
+
+
+  view.setUint32(0, high);
+  view.setUint32(4, low);
+
+
+  const key =
+    await crypto.subtle.importKey(
+      "raw",
+      keyBytes,
+      {
+        name: "HMAC",
+        hash: "SHA-1"
+      },
+      false,
+      ["sign"]
+    );
+
+
+  const signature =
+    new Uint8Array(
+      await crypto.subtle.sign(
+        "HMAC",
+        key,
+        counterBytes
+      )
+    );
+
+
+  const offset =
+    signature[
+      signature.length - 1
+    ] & 15;
+
+
+  const binary =
+    (
+      ((signature[offset] & 127) << 24) |
+      ((signature[offset + 1] & 255) << 16) |
+      ((signature[offset + 2] & 255) << 8) |
+      (signature[offset + 3] & 255)
+    ) >>> 0;
+
+
+  const code =
+    binary % 1000000;
+
+
+  return String(code)
+    .padStart(6, "0");
 }
 
 
-async function hotp(secret,counter){
+/* =========================================================
+   UPDATE ACCOUNT CODE
+   ========================================================= */
 
- const key =
- await crypto.subtle.importKey(
-  "raw",
-  base32ToBytes(secret),
-  {
-   name:"HMAC",
-   hash:"SHA-1"
-  },
-  false,
-  ["sign"]
- );
+async function updateAccountCode(account) {
 
- const signature =
- new Uint8Array(
-  await crypto.subtle.sign(
-   "HMAC",
-   key,
-   counterBytes(counter)
-  )
- );
+  try {
 
- const offset =
- signature[
-  signature.length-1
- ] & 15;
-
- const number =
- (
-  ((signature[offset] & 127) << 24) |
-  ((signature[offset+1] & 255) << 16) |
-  ((signature[offset+2] & 255) << 8) |
-  (signature[offset+3] & 255)
- );
-
- return String(
-  number % 1000000
- ).padStart(6,"0");
-
-}
+    const code =
+      await generateTOTP(
+        account.secret
+      );
 
 
-async function generateCode(secret){
+    const codeElement =
+      document.getElementById(
+        `code-${account.id}`
+      );
 
- const counter =
- Math.floor(
-  Date.now()/1000/30
- );
+    if (codeElement) {
+      codeElement.textContent = code;
+    }
 
- return hotp(
-  secret,
-  counter
- );
+
+    updateTimer(account.id);
+
+  } catch (error) {
+
+    const codeElement =
+      document.getElementById(
+        `code-${account.id}`
+      );
+
+    if (codeElement) {
+      codeElement.textContent = "ERROR";
+    }
+
+  }
 
 }
 
 
 /* =========================================================
+   TIMER
+   ========================================================= */
+
+function updateTimer(id) {
+
+  const seconds =
+    30 - (
+      Math.floor(Date.now() / 1000)
+      % 30
+    );
+
+
+  const timer =
+    document.getElementById(
+      `timer-${id}`
+    );
+
+  const progress =
+    document.getElementById(
+      `progress-${id}`
+    );
+
+
+  if (timer) {
+
+    timer.textContent =
+      `${seconds}s remaining`;
+
+  }
+
+
+  if (progress) {
+
+    progress.style.width =
+      `${(seconds / 30) * 100}%`;
+
+  }
+
+}
+
+
+/* =========================================================
+   COPY CODE
+   ===================================================
    ACCOUNTS
 ========================================================= */
 
