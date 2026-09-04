@@ -1,407 +1,1151 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Local Authenticator</title>
+<meta name="theme-color" content="#0b1020">
+<title>Secure Authenticator</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,sans-serif;background:#0b1020;color:#fff}
-.wrap{max-width:600px;margin:auto;padding:24px 16px}
-.card{background:#151c2f;border:1px solid #29334d;border-radius:18px;padding:18px;margin:14px 0}
-input{width:100%;padding:13px;margin:6px 0 12px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:white;font-size:16px}
-button{border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
-.code{font:800 34px monospace;letter-spacing:5px;margin-top:12px}
-.timer{color:#94a3b8;margin-top:8px}
-.bar{height:5px;background:#29334d;margin-top:12px;border-radius:9px}
-.bar span{display:block;height:100%;background:white}
-.small{color:#94a3b8;font-size:12px;line-height:1.5}
-.delete{background:#3b1820;color:#fecaca;margin-top:12px}
+
+body{
+ margin:0;
+ background:#0b1020;
+ color:#f8fafc;
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+
+.container{
+ max-width:650px;
+ margin:auto;
+ padding:22px 15px 50px
+}
+
+h1{margin:0;font-size:30px}
+.subtitle{color:#94a3b8;margin-top:5px}
+
+.card{
+ background:#151c2f;
+ border:1px solid #29334d;
+ border-radius:18px;
+ padding:18px;
+ margin-top:16px
+}
+
+input{
+ width:100%;
+ padding:13px;
+ margin:6px 0 12px;
+ border-radius:10px;
+ border:1px solid #334155;
+ background:#0f172a;
+ color:white;
+ font-size:16px
+}
+
+button{
+ border:0;
+ border-radius:10px;
+ padding:12px 15px;
+ font-weight:700;
+ cursor:pointer;
+ margin:4px
+}
+
+.primary{background:white;color:#0f172a}
+.secondary{background:#263149;color:white}
+.danger{background:#421b24;color:#fecaca}
+
+.hidden{display:none}
+
+.account{
+ display:flex;
+ align-items:center;
+ gap:13px
+}
+
+.logo{
+ width:48px;
+ height:48px;
+ border-radius:12px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:#263149;
+ font-size:24px;
+ overflow:hidden
+}
+
+.logo img{
+ width:100%;
+ height:100%;
+ object-fit:cover
+}
+
+.name{
+ font-size:17px;
+ font-weight:700
+}
+
+.issuer{
+ color:#94a3b8;
+ font-size:13px
+}
+
+.code{
+ font:800 34px monospace;
+ letter-spacing:5px;
+ margin-top:14px
+}
+
+.timer{
+ color:#94a3b8;
+ font-size:13px;
+ margin-top:6px
+}
+
+.progress{
+ height:5px;
+ background:#29334d;
+ border-radius:10px;
+ margin-top:10px;
+ overflow:hidden
+}
+
+.progress span{
+ display:block;
+ height:100%;
+ background:white
+}
+
+.small{
+ color:#94a3b8;
+ font-size:12px;
+ line-height:1.5
+}
+
+.buttons{
+ display:flex;
+ flex-wrap:wrap;
+ margin-top:10px
+}
+
+#unlockScreen{
+ position:fixed;
+ inset:0;
+ background:#0b1020;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ z-index:10
+}
+
+#unlockBox{
+ max-width:420px;
+ width:100%
+}
+
+.notice{
+ padding:12px;
+ border-radius:10px;
+ background:#1e293b;
+ color:#cbd5e1;
+ font-size:13px;
+ margin:10px 0
+}
 </style>
 </head>
 
 <body>
-<div class="wrap">
 
-<h1>🔐 Local Authenticator</h1>
-<p class="small">TOTP codes are generated locally in your browser.</p>
+<div id="unlockScreen">
+ <div id="unlockBox" class="card">
+  <h1>🔐 Authenticator</h1>
+  <p class="subtitle">
+   Your vault is encrypted locally.
+  </p>
+
+  <div id="firstSetup">
+   <p>Create a password to protect your authenticator.</p>
+
+   <input id="newPassword"
+          type="password"
+          placeholder="Create password">
+
+   <input id="confirmPassword"
+          type="password"
+          placeholder="Confirm password">
+
+   <button class="primary" onclick="createVault()">
+    Create encrypted vault
+   </button>
+  </div>
+
+  <div id="existingVault" class="hidden">
+   <p>Enter your password to unlock your vault.</p>
+
+   <input id="unlockPassword"
+          type="password"
+          placeholder="Vault password">
+
+   <button class="primary" onclick="unlockVault()">
+    Unlock
+   </button>
+  </div>
+
+  <div id="unlockMessage" class="small"></div>
+ </div>
+</div>
+
+
+<div class="container">
+
+<h1>🔐 Secure Authenticator</h1>
+
+<p class="subtitle">
+ Local TOTP authenticator
+</p>
+
 
 <div class="card">
+
 <h2>Add account</h2>
 
-<input id="issuer" placeholder="Service e.g. Discord">
-<input id="account" placeholder="Account name">
-<input id="secret" placeholder="TOTP secret">
+<input id="issuer"
+       placeholder="Service e.g. Discord">
 
-<button onclick="addAccount()">Add account</button>
+<input id="account"
+       placeholder="Account name">
+
+<input id="secret"
+       placeholder="TOTP secret">
+
+<button class="primary" onclick="addAccount()">
+ Add account
+</button>
+
+<button class="secondary" onclick="showQRInstructions()">
+ 📷 QR scanner
+</button>
 
 <p class="small">
-Your TOTP secret is sensitive. Never share it with anyone.
+ TOTP secrets are encrypted before being stored locally.
 </p>
+
 </div>
+
+
+<div class="card">
+
+<h2>Backup</h2>
+
+<p class="small">
+ Export creates an encrypted backup file. You need your vault
+ password to restore it.
+</p>
+
+<button class="secondary" onclick="exportBackup()">
+ 💾 Export encrypted backup
+</button>
+
+<button class="secondary" onclick="document.getElementById('backupFile').click()">
+ 📥 Import encrypted backup
+</button>
+
+<input id="backupFile"
+       type="file"
+       accept=".auth,.json"
+       style="display:none"
+       onchange="importBackup(event)">
+
+<button class="danger" onclick="lockVault()">
+ 🔒 Lock
+</button>
+
+</div>
+
 
 <div id="accounts"></div>
 
 </div>
 
+
 <script>
 
-const STORAGE_KEY = "local_authenticator_accounts";
+/* =========================================================
+   STORAGE
+========================================================= */
 
-let accounts =
-JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+const VAULT_KEY = "secure_authenticator_vault_v1";
+
+let vault = null;
+let password = null;
+let accounts = [];
 
 
-function save(){
+/* =========================================================
+   CRYPTO HELPERS
+========================================================= */
 
-localStorage.setItem(
-STORAGE_KEY,
-JSON.stringify(accounts)
-);
+function randomBytes(length){
+ return crypto.getRandomValues(new Uint8Array(length));
+}
+
+
+function bytesToBase64(bytes){
+ let binary = "";
+ bytes.forEach(b => binary += String.fromCharCode(b));
+ return btoa(binary);
+}
+
+
+function base64ToBytes(base64){
+ const binary = atob(base64);
+ const bytes = new Uint8Array(binary.length);
+
+ for(let i=0;i<binary.length;i++){
+  bytes[i] = binary.charCodeAt(i);
+ }
+
+ return bytes;
+}
+
+
+async function deriveKey(password,salt){
+
+ const material =
+ await crypto.subtle.importKey(
+  "raw",
+  new TextEncoder().encode(password),
+  "PBKDF2",
+  false,
+  ["deriveKey"]
+ );
+
+ return crypto.subtle.deriveKey(
+  {
+   name:"PBKDF2",
+   salt,
+   iterations:310000,
+   hash:"SHA-256"
+  },
+  material,
+  {
+   name:"AES-GCM",
+   length:256
+  },
+  false,
+  ["encrypt","decrypt"]
+ );
 
 }
 
+
+async function encryptData(data,key){
+
+ const iv = randomBytes(12);
+
+ const encrypted =
+ await crypto.subtle.encrypt(
+  {
+   name:"AES-GCM",
+   iv
+  },
+  key,
+  new TextEncoder().encode(
+   JSON.stringify(data)
+  )
+ );
+
+ return {
+  iv:bytesToBase64(iv),
+  data:bytesToBase64(
+   new Uint8Array(encrypted)
+  )
+ };
+
+}
+
+
+async function decryptData(payload,key){
+
+ const decrypted =
+ await crypto.subtle.decrypt(
+  {
+   name:"AES-GCM",
+   iv:base64ToBytes(payload.iv)
+  },
+  key,
+  base64ToBytes(payload.data)
+ );
+
+ return JSON.parse(
+  new TextDecoder().decode(decrypted)
+ );
+
+}
+
+
+/* =========================================================
+   VAULT
+========================================================= */
+
+async function createVault(){
+
+ const p =
+ document.getElementById("newPassword").value;
+
+ const confirm =
+ document.getElementById("confirmPassword").value;
+
+ if(p.length < 10){
+  showUnlockMessage(
+   "Use a password of at least 10 characters."
+  );
+  return;
+ }
+
+ if(p !== confirm){
+  showUnlockMessage(
+   "Passwords do not match."
+  );
+  return;
+ }
+
+ const salt = randomBytes(16);
+
+ const key =
+ await deriveKey(p,salt);
+
+ const encrypted =
+ await encryptData([],key);
+
+ vault = {
+  version:1,
+  salt:bytesToBase64(salt),
+  encrypted
+ };
+
+ localStorage.setItem(
+  VAULT_KEY,
+  JSON.stringify(vault)
+ );
+
+ password = p;
+ accounts = [];
+
+ unlockScreen(false);
+ render();
+
+}
+
+
+async function unlockVault(){
+
+ const p =
+ document.getElementById("unlockPassword").value;
+
+ try{
+
+  const stored =
+  JSON.parse(
+   localStorage.getItem(VAULT_KEY)
+  );
+
+  const salt =
+  base64ToBytes(stored.salt);
+
+  const key =
+  await deriveKey(p,salt);
+
+  accounts =
+  await decryptData(
+   stored.encrypted,
+   key
+  );
+
+  vault = stored;
+  password = p;
+
+  unlockScreen(false);
+
+  render();
+
+ }catch{
+
+  showUnlockMessage(
+   "Incorrect password or damaged vault."
+  );
+
+ }
+
+}
+
+
+async function saveVault(){
+
+ const salt =
+ base64ToBytes(vault.salt);
+
+ const key =
+ await deriveKey(password,salt);
+
+ vault.encrypted =
+ await encryptData(accounts,key);
+
+ localStorage.setItem(
+  VAULT_KEY,
+  JSON.stringify(vault)
+ );
+
+}
+
+
+function lockVault(){
+
+ password = null;
+ accounts = [];
+
+ document.getElementById(
+  "unlockPassword"
+ ).value = "";
+
+ unlockScreen(true);
+
+}
+
+
+function unlockScreen(show){
+
+ document.getElementById(
+  "unlockScreen"
+ ).style.display =
+ show ? "flex" : "none";
+
+ const exists =
+ localStorage.getItem(VAULT_KEY);
+
+ document.getElementById(
+  "firstSetup"
+ ).style.display =
+ exists ? "none" : "block";
+
+ document.getElementById(
+  "existingVault"
+ ).style.display =
+ exists ? "block" : "none";
+
+}
+
+
+function showUnlockMessage(message){
+
+ document.getElementById(
+  "unlockMessage"
+ ).textContent = message;
+
+}
+
+
+/* =========================================================
+   BASE32
+========================================================= */
 
 function base32ToBytes(secret){
 
-secret = secret
-.toUpperCase()
-.replace(/[\s-]/g,"")
-.replace(/=+$/,"");
+ secret =
+ secret
+ .toUpperCase()
+ .replace(/[\s-]/g,"")
+ .replace(/=+$/,"");
 
-const alphabet =
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+ const alphabet =
+ "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
-let bits = "";
+ let bits = "";
 
-for(const char of secret){
+ for(const char of secret){
 
-const value =
-alphabet.indexOf(char);
+  const value =
+  alphabet.indexOf(char);
 
-if(value < 0)
-throw new Error("Invalid Base32 secret.");
+  if(value < 0)
+   throw new Error(
+    "Invalid Base32 secret."
+   );
 
-bits +=
-value.toString(2).padStart(5,"0");
+  bits +=
+  value.toString(2).padStart(5,"0");
+
+ }
+
+ const bytes = [];
+
+ for(
+  let i=0;
+  i+8<=bits.length;
+  i+=8
+ ){
+
+  bytes.push(
+   parseInt(
+    bits.slice(i,i+8),
+    2
+   )
+  );
+
+ }
+
+ return new Uint8Array(bytes);
 
 }
 
-const bytes = [];
 
-for(
-let i=0;
-i + 8 <= bits.length;
-i += 8
-){
-
-bytes.push(
-parseInt(bits.slice(i,i+8),2)
-);
-
-}
-
-return new Uint8Array(bytes);
-
-}
-
+/* =========================================================
+   TOTP
+========================================================= */
 
 function counterBytes(counter){
 
-const buffer =
-new ArrayBuffer(8);
+ const buffer =
+ new ArrayBuffer(8);
 
-const view =
-new DataView(buffer);
+ const view =
+ new DataView(buffer);
 
-view.setUint32(
-0,
-Math.floor(counter / 0x100000000)
-);
+ view.setUint32(
+ 0,
+ Math.floor(
+  counter / 0x100000000
+ )
+ );
 
-view.setUint32(
-4,
-counter >>> 0
-);
+ view.setUint32(
+ 4,
+ counter >>> 0
+ );
 
-return buffer;
+ return buffer;
 
 }
 
 
 async function hotp(secret,counter){
 
-const key =
-await crypto.subtle.importKey(
-"raw",
-base32ToBytes(secret),
-{
-name:"HMAC",
-hash:"SHA-1"
-},
-false,
-["sign"]
-);
+ const key =
+ await crypto.subtle.importKey(
+  "raw",
+  base32ToBytes(secret),
+  {
+   name:"HMAC",
+   hash:"SHA-1"
+  },
+  false,
+  ["sign"]
+ );
 
-const signature =
-new Uint8Array(
-await crypto.subtle.sign(
-"HMAC",
-key,
-counterBytes(counter)
-)
-);
+ const signature =
+ new Uint8Array(
+  await crypto.subtle.sign(
+   "HMAC",
+   key,
+   counterBytes(counter)
+  )
+ );
 
-const offset =
-signature[signature.length-1] & 15;
+ const offset =
+ signature[
+  signature.length-1
+ ] & 15;
 
-const number =
-(
-((signature[offset] & 127) << 24) |
-((signature[offset+1] & 255) << 16) |
-((signature[offset+2] & 255) << 8) |
-(signature[offset+3] & 255)
-);
+ const number =
+ (
+  ((signature[offset] & 127) << 24) |
+  ((signature[offset+1] & 255) << 16) |
+  ((signature[offset+2] & 255) << 8) |
+  (signature[offset+3] & 255)
+ );
 
-return String(
-number % 1000000
-).padStart(6,"0");
+ return String(
+  number % 1000000
+ ).padStart(6,"0");
 
 }
 
 
 async function generateCode(secret){
 
-const counter =
-Math.floor(
-Date.now() / 1000 / 30
-);
+ const counter =
+ Math.floor(
+  Date.now()/1000/30
+ );
 
-return hotp(secret,counter);
+ return hotp(
+  secret,
+  counter
+ );
+
+}
+
+
+/* =========================================================
+   ACCOUNTS
+========================================================= */
+
+async function addAccount(){
+
+ const issuer =
+ document.getElementById(
+  "issuer"
+ ).value.trim();
+
+ const account =
+ document.getElementById(
+  "account"
+ ).value.trim();
+
+ const secret =
+ document.getElementById(
+  "secret"
+ ).value
+ .trim()
+ .replace(/\s+/g,"")
+ .toUpperCase();
+
+ if(!secret){
+  alert("Enter a TOTP secret.");
+  return;
+ }
+
+ try{
+
+  base32ToBytes(secret);
+
+ }catch(error){
+
+  alert(error.message);
+  return;
+
+ }
+
+ accounts.push({
+  issuer,
+  account,
+  secret
+ });
+
+ await saveVault();
+
+ document.getElementById(
+  "issuer"
+ ).value="";
+
+ document.getElementById(
+  "account"
+ ).value="";
+
+ document.getElementById(
+  "secret"
+ ).value="";
+
+ render();
 
 }
 
 
-function escapeHTML(text){
+async function deleteAccount(index){
 
-return String(text).replace(
-/[&<>"']/g,
-char => ({
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#39;"
-}[char])
-);
+ if(!confirm(
+  "Delete this account?"
+ )) return;
+
+ accounts.splice(index,1);
+
+ await saveVault();
+
+ render();
 
 }
 
+
+/* =========================================================
+   LOGOS
+========================================================= */
+
+function getLogo(issuer){
+
+ const name =
+ (issuer || "")
+ .toLowerCase();
+
+ if(name.includes("discord"))
+  return "💬";
+
+ if(name.includes("google"))
+  return "🔵";
+
+ if(name.includes("github"))
+  return "🐙";
+
+ if(name.includes("microsoft"))
+  return "🪟";
+
+ if(name.includes("apple"))
+  return "";
+
+ if(name.includes("amazon"))
+  return "📦";
+
+ if(name.includes("facebook") ||
+    name.includes("meta"))
+  return "Ⓜ️";
+
+ return "🔐";
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
 
 async function render(){
 
-const container =
-document.getElementById("accounts");
+ const root =
+ document.getElementById(
+  "accounts"
+ );
 
-if(accounts.length === 0){
+ if(accounts.length === 0){
 
-container.innerHTML =
-'<div class="card"><p class="small">No accounts added yet.</p></div>';
+  root.innerHTML =
+  `<div class="card">
+   <p class="small">
+    No accounts added yet.
+   </p>
+  </div>`;
 
-return;
+  return;
 
-}
+ }
 
-container.innerHTML =
-accounts.map((account,index)=>`
+ root.innerHTML =
+ accounts.map(
+ (a,i)=>`
 
-<div class="card">
+ <div class="card">
 
-<strong>
-${escapeHTML(account.account || "Account")}
-</strong>
+  <div class="account">
 
-<p class="small">
-${escapeHTML(account.issuer || "Authenticator")}
-</p>
+   <div class="logo">
+    ${getLogo(a.issuer)}
+   </div>
 
-<div
-class="code"
-id="code-${index}">
-------
-</div>
+   <div>
+    <div class="name">
+     ${escapeHTML(
+      a.account || "Account"
+     )}
+    </div>
 
-<div
-class="timer"
-id="timer-${index}">
-Loading...
-</div>
+    <div class="issuer">
+     ${escapeHTML(
+      a.issuer || "Authenticator"
+     )}
+    </div>
+   </div>
 
-<div class="bar">
-<span id="bar-${index}"></span>
-</div>
+  </div>
 
-<button
-class="delete"
-onclick="deleteAccount(${index})">
-Delete
-</button>
+  <div
+   class="code"
+   id="code-${i}">
+   ------
+  </div>
 
-</div>
+  <div
+   class="timer"
+   id="timer-${i}">
+   Loading...
+  </div>
 
-`).join("");
+  <div class="progress">
+   <span id="bar-${i}"></span>
+  </div>
 
-await updateCodes();
+  <div class="buttons">
+
+   <button
+    class="secondary"
+    onclick="copyCode(${i})">
+    📋 Copy
+   </button>
+
+   <button
+    class="danger"
+    onclick="deleteAccount(${i})">
+    Delete
+   </button>
+
+  </div>
+
+ </div>
+
+ `
+ ).join("");
+
+ await updateCodes();
 
 }
 
 
 async function updateCodes(){
 
-const seconds =
-Math.floor(Date.now()/1000);
+ const seconds =
+ Math.floor(
+  Date.now()/1000
+ );
 
-const remaining =
-30 - (seconds % 30);
+ const remaining =
+ 30-(seconds%30);
 
-const percentage =
-(remaining / 30) * 100;
+ const percentage =
+ remaining/30*100;
 
-for(
-let i=0;
-i<accounts.length;
-i++
-){
+ for(
+ let i=0;
+ i<accounts.length;
+ i++
+ ){
 
-try{
+  try{
 
-const code =
-await generateCode(
-accounts[i].secret
+   const code =
+   await generateCode(
+    accounts[i].secret
+   );
+
+   const codeElement =
+   document.getElementById(
+    `code-${i}`
+   );
+
+   if(codeElement)
+    codeElement.textContent =
+    code;
+
+   const timer =
+   document.getElementById(
+    `timer-${i}`
+   );
+
+   if(timer)
+    timer.textContent =
+    `Changes in ${remaining}s`;
+
+   const bar =
+   document.getElementById(
+    `bar-${i}`
+   );
+
+   if(bar)
+    bar.style.width =
+    percentage+"%";
+
+  }catch{}
+
+ }
+
+}
+
+
+async function copyCode(index){
+
+ const code =
+ await generateCode(
+  accounts[index].secret
+ );
+
+ try{
+
+  await navigator.clipboard.writeText(
+   code
+  );
+
+  alert("Code copied.");
+
+ }catch{
+
+  alert(
+   "Copy failed. Your browser may block clipboard access."
+  );
+
+ }
+
+}
+
+
+function escapeHTML(text){
+
+ return String(text).replace(
+  /[&<>"']/g,
+  char=>({
+   "&":"&amp;",
+   "<":"&lt;",
+   ">":"&gt;",
+   '"':"&quot;",
+   "'":"&#39;"
+  }[char])
+ );
+
+}
+
+
+/* =========================================================
+   ENCRYPTED BACKUP
+========================================================= */
+
+async function exportBackup(){
+
+ if(!password){
+
+  alert("Unlock the vault first.");
+  return;
+
+ }
+
+ const backup =
+ JSON.stringify(
+  {
+   type:"secure-authenticator-backup",
+   version:1,
+   vault
+  },
+  null,
+  2
+ );
+
+ const blob =
+ new Blob(
+  [backup],
+  {type:"application/json"}
+ );
+
+ const url =
+ URL.createObjectURL(blob);
+
+ const link =
+ document.createElement("a");
+
+ link.href=url;
+
+ link.download=
+ "authenticator-backup.auth";
+
+ link.click();
+
+ URL.revokeObjectURL(url);
+
+}
+
+
+async function importBackup(event){
+
+ const file =
+ event.target.files[0];
+
+ if(!file) return;
+
+ try{
+
+  const text =
+  await file.text();
+
+  const imported =
+  JSON.parse(text);
+
+  if(
+   imported.type !==
+   "secure-authenticator-backup"
+  ){
+
+   throw new Error(
+    "Invalid backup."
+   );
+
+  }
+
+  if(
+   !confirm(
+    "Importing will replace the current vault. Continue?"
+   )
+  ) return;
+
+  localStorage.setItem(
+   VAULT_KEY,
+   JSON.stringify(
+    imported.vault
+   )
+  );
+
+  alert(
+   "Backup imported. Unlock it using the password that protected the backup."
+  );
+
+  location.reload();
+
+ }catch(error){
+
+  alert(
+   "Could not import backup."
+  );
+
+ }
+
+ event.target.value="";
+
+}
+
+
+/* =========================================================
+   QR PLACEHOLDER
+========================================================= */
+
+function showQRInstructions(){
+
+ alert(
+  "QR scanning needs a QR-code library or the browser's BarcodeDetector API.\\n\\n" +
+  "This version accepts TOTP secrets manually.\\n\\n" +
+  "Next upgrade: scan standard otpauth:// QR codes and automatically fill the account."
+ );
+
+}
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+unlockScreen(
+ !localStorage.getItem(VAULT_KEY)
 );
 
-document.getElementById(
-`code-${i}`
-).textContent = code;
-
-document.getElementById(
-`timer-${i}`
-).textContent =
-`Changes in ${remaining}s`;
-
-document.getElementById(
-`bar-${i}`
-).style.width =
-percentage + "%";
-
-}catch(error){
-
-document.getElementById(
-`code-${i}`
-).textContent =
-"ERROR";
-
-document.getElementById(
-`timer-${i}`
-).textContent =
-"Invalid secret";
-
-}
-
-}
-
-}
-
-
-async function addAccount(){
-
-const issuer =
-document.getElementById("issuer")
-.value.trim();
-
-const account =
-document.getElementById("account")
-.value.trim();
-
-const secret =
-document.getElementById("secret")
-.value
-.trim()
-.replace(/\s+/g,"")
-.toUpperCase();
-
-if(!secret){
-
-alert("Enter a TOTP secret.");
-
-return;
-
-}
-
-try{
-
-base32ToBytes(secret);
-
-}catch(error){
-
-alert(error.message);
-
-return;
-
-}
-
-accounts.push({
-issuer,
-account,
-secret
-});
-
-save();
-
-document.getElementById(
-"issuer"
-).value = "";
-
-document.getElementById(
-"account"
-).value = "";
-
-document.getElementById(
-"secret"
-).value = "";
-
-await render();
-
-}
-
-
-function deleteAccount(index){
-
 if(
-confirm(
-"Delete this account?"
-)
+ localStorage.getItem(VAULT_KEY)
 ){
 
-accounts.splice(index,1);
-
-save();
-
-render();
+ unlockScreen(true);
 
 }
-
-}
-
-
-render();
 
 setInterval(
-updateCodes,
-1000
+ updateCodes,
+ 1000
 );
 
 </script>
 
 </body>
-  </html>
+     </html>
