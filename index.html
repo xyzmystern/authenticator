@@ -1,562 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyGuard Test</title>
 
-<title>KeyGuard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #10131a;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        button {
+            width: 100%;
+            max-width: 400px;
+            padding: 18px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            background: #5865f2;
+            color: white;
+            font-size: 18px;
+        }
 
-<style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: #10131a;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-.container {
-    width: 92%;
-    max-width: 500px;
-    margin: auto;
-    padding: 25px 0 40px;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 5px;
-}
-
-h2 {
-    margin-top: 0;
-}
-
-.subtitle {
-    text-align: center;
-    color: #9da5b4;
-    margin-bottom: 25px;
-}
-
-.card {
-    background: #191e28;
-    padding: 20px;
-    border-radius: 16px;
-    margin-bottom: 16px;
-}
-
-input {
-    width: 100%;
-    padding: 14px;
-    margin: 7px 0;
-    border: 1px solid #343b49;
-    border-radius: 10px;
-    background: #10131a;
-    color: white;
-    font-size: 16px;
-}
-
-button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 10px;
-    background: #5865f2;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-button:disabled {
-    opacity: 0.5;
-}
-
-.secondary {
-    background: #303643;
-}
-
-.danger {
-    background: #c43d4b;
-}
-
-.status {
-    display: none;
-    padding: 12px;
-    border-radius: 10px;
-    margin-top: 12px;
-    line-height: 1.4;
-    word-break: break-word;
-}
-
-.status.show {
-    display: block;
-}
-
-.status.error {
-    background: #422027;
-    color: #ffb4bd;
-}
-
-.status.success {
-    background: #203b2c;
-    color: #a8f0bd;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.account {
-    background: #222936;
-    border-radius: 12px;
-    padding: 15px;
-    margin-top: 12px;
-}
-
-.account-name {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.account-issuer {
-    color: #9da5b4;
-    font-size: 13px;
-}
-
-.code {
-    font-size: 32px;
-    font-weight: bold;
-    letter-spacing: 5px;
-    text-align: center;
-    margin: 15px 0;
-}
-
-#timer {
-    text-align: center;
-    color: #9da5b4;
-    margin-top: 15px;
-}
-
-.small {
-    color: #9da5b4;
-    font-size: 13px;
-    line-height: 1.5;
-}
-</style>
+        #result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #202633;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
-
-<!-- =====================================================
-     LOGIN / CREATE ACCOUNT
-===================================================== -->
-
-<div id="authScreen">
-
     <h1>🔐 KeyGuard</h1>
 
-    <div class="subtitle">
-        Secure authenticator
-    </div>
+    <p>JavaScript button test</p>
 
-    <div class="card">
-
-        <h2 id="authTitle">Create Account</h2>
-
-        <input
-            id="emailInput"
-            type="email"
-            placeholder="Email"
-            autocomplete="email"
-        >
-
-        <input
-            id="passwordInput"
-            type="password"
-            placeholder="Password"
-            autocomplete="new-password"
-        >
-
-        <input
-            id="confirmPasswordInput"
-            type="password"
-            placeholder="Confirm password"
-            autocomplete="new-password"
-        >
-
-        <button
-            id="authButton"
-            type="button"
-        >
-            Create Account
-        </button>
-
-        <button
-            id="switchAuthButton"
-            type="button"
-            class="secondary"
-        >
-            Already have an account? Log in
-        </button>
-
-        <div
-            id="authStatus"
-            class="status"
-        ></div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     MAIN APP
-===================================================== -->
-
-<div id="appScreen" class="hidden">
-
-    <h1>🔐 KeyGuard</h1>
-
-    <div class="subtitle">
-        <span id="loggedInEmail"></span>
-    </div>
-
-
-    <!-- VAULT -->
-
-    <div class="card">
-
-        <h2>🔒 Vault</h2>
-
-        <div id="lockedArea">
-
-            <p class="small">
-                Your authenticator data is encrypted before it is
-                stored in the cloud.
-            </p>
-
-            <input
-                id="vaultPasswordInput"
-                type="password"
-                placeholder="Vault password"
-            >
-
-            <button
-                id="createVaultButton"
-                type="button"
-            >
-                Create New Vault
-            </button>
-
-            <button
-                id="unlockVaultButton"
-                type="button"
-            >
-                Unlock Vault
-            </button>
-
-        </div>
-
-
-        <div
-            id="unlockedArea"
-            class="hidden"
-        >
-
-            <button
-                id="addAccountButton"
-                type="button"
-            >
-                ➕ Add Account
-            </button>
-
-            <button
-                id="exportButton"
-                type="button"
-                class="secondary"
-            >
-                📦 Export Encrypted Backup
-            </button>
-
-            <button
-                id="importButton"
-                type="button"
-                class="secondary"
-            >
-                📥 Import Encrypted Backup
-            </button>
-
-            <input
-                id="importFile"
-                type="file"
-                accept=".json"
-                class="hidden"
-            >
-
-            <button
-                id="lockButton"
-                type="button"
-                class="danger"
-            >
-                🔒 Lock Vault
-            </button>
-
-        </div>
-
-        <div
-            id="vaultStatus"
-            class="status"
-        ></div>
-
-    </div>
-
-
-    <!-- ADD ACCOUNT -->
-
-    <div
-        id="addAccountCard"
-        class="card hidden"
-    >
-
-        <h2>Add Account</h2>
-
-        <input
-            id="issuerInput"
-            type="text"
-            placeholder="Issuer e.g. Discord"
-        >
-
-        <input
-            id="accountInput"
-            type="text"
-            placeholder="Account name / email"
-        >
-
-        <input
-            id="secretInput"
-            type="text"
-            placeholder="TOTP secret"
-            autocomplete="off"
-        >
-
-        <button
-            id="saveAccountButton"
-            type="button"
-        >
-            Save Account
-        </button>
-
-        <button
-            id="cancelAccountButton"
-            type="button"
-            class="secondary"
-        >
-            Cancel
-        </button>
-
-    </div>
-
-
-    <!-- ACCOUNTS -->
-
-    <div class="card">
-
-        <h2>Authenticator Codes</h2>
-
-        <div id="accountsList">
-            <p class="small">
-                Unlock your vault to see your accounts.
-            </p>
-        </div>
-
-        <div id="timer"></div>
-
-    </div>
-
-
-    <button
-        id="logoutButton"
-        type="button"
-        class="danger"
-    >
-        Log Out
+    <button id="testButton" type="button">
+        TEST BUTTON
     </button>
 
-</div>
+    <button id="secondButton" type="button">
+        SECOND BUTTON
+    </button>
 
-</div>
+    <div id="result">
+        Waiting for a button...
+    </div>
 
+    <script>
+        const testButton =
+            document.getElementById("testButton");
 
-<script>
-/* =====================================================
-   SUPABASE CONFIG
-===================================================== */
+        const secondButton =
+            document.getElementById("secondButton");
 
-/*
-   Put your Supabase Project URL here.
-*/
-
-const SUPABASE_URL =
-    "YOUR_SUPABASE_PROJECT_URL";
-
-
-/*
-   Put your Supabase PUBLISHABLE key here.
-
-   Do NOT put your service-role key here.
-*/
-
-const SUPABASE_PUBLISHABLE_KEY =
-    "YOUR_SUPABASE_PUBLISHABLE_KEY";
+        const result =
+            document.getElementById("result");
 
 
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
+        testButton.addEventListener("click", function() {
 
-let supabaseClient = null;
+            result.textContent =
+                "✅ JavaScript is working!";
 
-let currentUser = null;
-
-let cloudVault = null;
-
-let vaultData = {
-    accounts: []
-};
-
-let vaultPassword = null;
-
-let vaultUnlocked = false;
-
-let authMode = "signup";
+        });
 
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
+        secondButton.addEventListener("click", function() {
 
-const authScreen =
-    document.getElementById("authScreen");
+            result.textContent =
+                "🎉 The second button works too!";
 
-const appScreen =
-    document.getElementById("appScreen");
+        });
+    </script>
 
-const authTitle =
-    document.getElementById("authTitle");
-
-const authButton =
-    document.getElementById("authButton");
-
-const switchAuthButton =
-    document.getElementById("switchAuthButton");
-
-const emailInput =
-    document.getElementById("emailInput");
-
-const passwordInput =
-    document.getElementById("passwordInput");
-
-const confirmPasswordInput =
-    document.getElementById("confirmPasswordInput");
-
-const authStatus =
-    document.getElementById("authStatus");
-
-const loggedInEmail =
-    document.getElementById("loggedInEmail");
-
-const lockedArea =
-    document.getElementById("lockedArea");
-
-const unlockedArea =
-    document.getElementById("unlockedArea");
-
-const vaultPasswordInput =
-    document.getElementById("vaultPasswordInput");
-
-const vaultStatus =
-    document.getElementById("vaultStatus");
-
-const addAccountCard =
-    document.getElementById("addAccountCard");
-
-const issuerInput =
-    document.getElementById("issuerInput");
-
-const accountInput =
-    document.getElementById("accountInput");
-
-const secretInput =
-    document.getElementById("secretInput");
-
-const accountsList =
-    document.getElementById("accountsList");
-
-const timer =
-    document.getElementById("timer");
-
-
-/* =====================================================
-   STATUS
-===================================================== */
-
-function showStatus(element, message, type) {
-
-    element.textContent = message;
-
-    element.className =
-        "status show " + type;
-}
-
-
-function hideStatus(element) {
-
-    element.textContent = "";
-
-    element.className = "status";
-}
-
-
-/* =====================================================
-   SUPABASE STARTUP
-===================================================== */
-
-function startSupabase() {
-
-    if (
-        SUPABASE_URL ===
-        "https://ldkqgdbvqeyabzgftssc.supabase.co"
-    ) {
-
-        throw new Error(
-            "You haven't entered your Supabase Project URL."
-        );
-    }
-
-    if (
-        SUPABASE_PUBLISHABLE_KEY ===
-        "sb_publishable_g_OkyFkkQ_GeK7Y8uJb6hQ_Sw_Se0aS"
-    ) {
-
-        throw new Error(
-            "You haven't entered your Supabase publishable key."
-        );
-    }
-
-    if (
-        !window.supabase ||
+</body>
+</html>||
         !window.supabase.createClient
     ) {
 
