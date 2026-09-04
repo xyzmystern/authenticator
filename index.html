@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>KeyGuard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,21 +16,25 @@
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: Arial, sans-serif;
     background: #10131a;
     color: white;
+    font-family: Arial, sans-serif;
 }
 
 .container {
     width: 92%;
     max-width: 500px;
-    margin: 0 auto;
-    padding: 30px 0;
+    margin: auto;
+    padding: 25px 0 40px;
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
+}
+
+h2 {
+    margin-top: 0;
 }
 
 .subtitle {
@@ -40,8 +45,8 @@ h1 {
 
 .card {
     background: #191e28;
-    border-radius: 16px;
     padding: 20px;
+    border-radius: 16px;
     margin-bottom: 16px;
 }
 
@@ -60,12 +65,16 @@ button {
     width: 100%;
     padding: 14px;
     margin-top: 10px;
-    border: 0;
+    border: none;
     border-radius: 10px;
     background: #5865f2;
     color: white;
     font-size: 16px;
     font-weight: bold;
+}
+
+button:active {
+    transform: scale(0.98);
 }
 
 button:disabled {
@@ -85,6 +94,7 @@ button:disabled {
     padding: 12px;
     border-radius: 10px;
     margin-top: 12px;
+    line-height: 1.4;
     word-break: break-word;
 }
 
@@ -113,36 +123,34 @@ button:disabled {
     margin-top: 12px;
 }
 
+.account-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.account-issuer {
+    color: #9da5b4;
+    font-size: 13px;
+}
+
 .code {
     font-size: 32px;
     font-weight: bold;
     letter-spacing: 5px;
     text-align: center;
-    margin: 12px 0;
-}
-
-.small {
-    color: #9da5b4;
-    font-size: 13px;
+    margin: 15px 0;
 }
 
 #timer {
     text-align: center;
     color: #9da5b4;
-    margin-bottom: 10px;
+    margin-top: 15px;
 }
 
-img.account-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 10px;
-    object-fit: cover;
-    vertical-align: middle;
-    margin-right: 10px;
-}
-
-#appScreen {
-    display: none;
+.small {
+    color: #9da5b4;
+    font-size: 13px;
+    line-height: 1.5;
 }
 </style>
 </head>
@@ -151,195 +159,278 @@ img.account-icon {
 
 <div class="container">
 
-    <!-- AUTH SCREEN -->
-    <div id="authScreen">
+<!-- =====================================================
+     LOGIN / CREATE ACCOUNT
+===================================================== -->
 
-        <h1>🔐 KeyGuard</h1>
-        <div class="subtitle">
-            Secure authenticator
-        </div>
+<div id="authScreen">
 
-        <div class="card">
+    <h1>🔐 KeyGuard</h1>
 
-            <h2 id="authTitle">Create Account</h2>
-
-            <input
-                id="emailInput"
-                type="email"
-                placeholder="Email"
-                autocomplete="email"
-            >
-
-            <input
-                id="passwordInput"
-                type="password"
-                placeholder="Password"
-                autocomplete="new-password"
-            >
-
-            <input
-                id="confirmPasswordInput"
-                type="password"
-                placeholder="Confirm password"
-                autocomplete="new-password"
-            >
-
-            <button id="authButton" type="button">
-                Create Account
-            </button>
-
-            <button id="switchAuthButton" class="secondary" type="button">
-                Already have an account? Log in
-            </button>
-
-            <div id="authStatus" class="status"></div>
-
-        </div>
-
+    <div class="subtitle">
+        Secure authenticator
     </div>
 
+    <div class="card">
 
-    <!-- APP SCREEN -->
-    <div id="appScreen">
+        <h2 id="authTitle">Create Account</h2>
 
-        <h1>🔐 KeyGuard</h1>
+        <input
+            id="emailInput"
+            type="email"
+            placeholder="Email"
+            autocomplete="email"
+        >
 
-        <div class="subtitle">
-            <span id="loggedInEmail"></span>
-        </div>
+        <input
+            id="passwordInput"
+            type="password"
+            placeholder="Password"
+            autocomplete="new-password"
+        >
 
-        <div class="card">
+        <input
+            id="confirmPasswordInput"
+            type="password"
+            placeholder="Confirm password"
+            autocomplete="new-password"
+        >
 
-            <h2>Vault</h2>
-
-            <div id="vaultLocked">
-
-                <p class="small">
-                    Your encrypted vault is locked.
-                </p>
-
-                <input
-                    id="vaultPassword"
-                    type="password"
-                    placeholder="Vault password"
-                >
-
-                <button id="unlockButton" type="button">
-                    Unlock Vault
-                </button>
-
-                <button id="createVaultButton" class="secondary" type="button">
-                    Create New Vault
-                </button>
-
-            </div>
-
-            <div id="vaultUnlocked" class="hidden">
-
-                <button id="addAccountButton" type="button">
-                    ➕ Add Account
-                </button>
-
-                <button id="exportButton" class="secondary" type="button">
-                    Export Encrypted Backup
-                </button>
-
-                <button id="importButton" class="secondary" type="button">
-                    Import Encrypted Backup
-                </button>
-
-                <input
-                    id="importFile"
-                    type="file"
-                    accept=".json"
-                    class="hidden"
-                >
-
-                <button id="lockButton" class="danger" type="button">
-                    🔒 Lock Vault
-                </button>
-
-            </div>
-
-            <div id="vaultStatus" class="status"></div>
-
-        </div>
-
-
-        <div id="addAccountCard" class="card hidden">
-
-            <h2>Add Account</h2>
-
-            <input
-                id="issuerInput"
-                type="text"
-                placeholder="Issuer e.g. Discord"
-            >
-
-            <input
-                id="accountNameInput"
-                type="text"
-                placeholder="Account name / email"
-            >
-
-            <input
-                id="secretInput"
-                type="text"
-                placeholder="TOTP secret"
-                autocomplete="off"
-            >
-
-            <button id="saveAccountButton" type="button">
-                Save Account
-            </button>
-
-            <button id="cancelAccountButton" class="secondary" type="button">
-                Cancel
-            </button>
-
-        </div>
-
-
-        <div class="card">
-
-            <h2>Accounts</h2>
-
-            <div id="accountsList">
-                <p class="small">
-                    Unlock your vault to view accounts.
-                </p>
-            </div>
-
-            <div id="timer"></div>
-
-        </div>
-
-
-        <button id="logoutButton" class="danger" type="button">
-            Log Out
+        <button
+            id="authButton"
+            type="button"
+        >
+            Create Account
         </button>
+
+        <button
+            id="switchAuthButton"
+            type="button"
+            class="secondary"
+        >
+            Already have an account? Log in
+        </button>
+
+        <div
+            id="authStatus"
+            class="status"
+        ></div>
 
     </div>
 
 </div>
 
 
+<!-- =====================================================
+     MAIN APP
+===================================================== -->
+
+<div id="appScreen" class="hidden">
+
+    <h1>🔐 KeyGuard</h1>
+
+    <div class="subtitle">
+        <span id="loggedInEmail"></span>
+    </div>
+
+
+    <!-- VAULT -->
+
+    <div class="card">
+
+        <h2>🔒 Vault</h2>
+
+        <div id="lockedArea">
+
+            <p class="small">
+                Your authenticator data is encrypted before it is
+                stored in the cloud.
+            </p>
+
+            <input
+                id="vaultPasswordInput"
+                type="password"
+                placeholder="Vault password"
+            >
+
+            <button
+                id="createVaultButton"
+                type="button"
+            >
+                Create New Vault
+            </button>
+
+            <button
+                id="unlockVaultButton"
+                type="button"
+            >
+                Unlock Vault
+            </button>
+
+        </div>
+
+
+        <div
+            id="unlockedArea"
+            class="hidden"
+        >
+
+            <button
+                id="addAccountButton"
+                type="button"
+            >
+                ➕ Add Account
+            </button>
+
+            <button
+                id="exportButton"
+                type="button"
+                class="secondary"
+            >
+                📦 Export Encrypted Backup
+            </button>
+
+            <button
+                id="importButton"
+                type="button"
+                class="secondary"
+            >
+                📥 Import Encrypted Backup
+            </button>
+
+            <input
+                id="importFile"
+                type="file"
+                accept=".json"
+                class="hidden"
+            >
+
+            <button
+                id="lockButton"
+                type="button"
+                class="danger"
+            >
+                🔒 Lock Vault
+            </button>
+
+        </div>
+
+        <div
+            id="vaultStatus"
+            class="status"
+        ></div>
+
+    </div>
+
+
+    <!-- ADD ACCOUNT -->
+
+    <div
+        id="addAccountCard"
+        class="card hidden"
+    >
+
+        <h2>Add Account</h2>
+
+        <input
+            id="issuerInput"
+            type="text"
+            placeholder="Issuer e.g. Discord"
+        >
+
+        <input
+            id="accountInput"
+            type="text"
+            placeholder="Account name / email"
+        >
+
+        <input
+            id="secretInput"
+            type="text"
+            placeholder="TOTP secret"
+            autocomplete="off"
+        >
+
+        <button
+            id="saveAccountButton"
+            type="button"
+        >
+            Save Account
+        </button>
+
+        <button
+            id="cancelAccountButton"
+            type="button"
+            class="secondary"
+        >
+            Cancel
+        </button>
+
+    </div>
+
+
+    <!-- ACCOUNTS -->
+
+    <div class="card">
+
+        <h2>Authenticator Codes</h2>
+
+        <div id="accountsList">
+            <p class="small">
+                Unlock your vault to see your accounts.
+            </p>
+        </div>
+
+        <div id="timer"></div>
+
+    </div>
+
+
+    <button
+        id="logoutButton"
+        type="button"
+        class="danger"
+    >
+        Log Out
+    </button>
+
+</div>
+
+</div>
+
+
 <script>
-/* =========================================================
+/* =====================================================
    SUPABASE CONFIG
-   ========================================================= */
+===================================================== */
 
-const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-const SUPABASE_PUBLISHABLE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+/*
+   Put your Supabase Project URL here.
+*/
+
+const SUPABASE_URL =
+    "YOUR_SUPABASE_PROJECT_URL";
 
 
-/* =========================================================
-   GLOBAL STATE
-   ========================================================= */
+/*
+   Put your Supabase PUBLISHABLE key here.
+
+   Do NOT put your service-role key here.
+*/
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
 let supabaseClient = null;
 
 let currentUser = null;
+
+let cloudVault = null;
 
 let vaultData = {
     accounts: []
@@ -347,40 +438,53 @@ let vaultData = {
 
 let vaultPassword = null;
 
-let isVaultUnlocked = false;
+let vaultUnlocked = false;
 
 let authMode = "signup";
 
 
-/* =========================================================
+/* =====================================================
    ELEMENTS
-   ========================================================= */
+===================================================== */
 
-const authScreen = document.getElementById("authScreen");
-const appScreen = document.getElementById("appScreen");
+const authScreen =
+    document.getElementById("authScreen");
 
-const authTitle = document.getElementById("authTitle");
-const authButton = document.getElementById("authButton");
-const switchAuthButton = document.getElementById("switchAuthButton");
+const appScreen =
+    document.getElementById("appScreen");
 
-const emailInput = document.getElementById("emailInput");
-const passwordInput = document.getElementById("passwordInput");
+const authTitle =
+    document.getElementById("authTitle");
+
+const authButton =
+    document.getElementById("authButton");
+
+const switchAuthButton =
+    document.getElementById("switchAuthButton");
+
+const emailInput =
+    document.getElementById("emailInput");
+
+const passwordInput =
+    document.getElementById("passwordInput");
+
 const confirmPasswordInput =
     document.getElementById("confirmPasswordInput");
 
-const authStatus = document.getElementById("authStatus");
+const authStatus =
+    document.getElementById("authStatus");
 
 const loggedInEmail =
     document.getElementById("loggedInEmail");
 
-const vaultLocked =
-    document.getElementById("vaultLocked");
+const lockedArea =
+    document.getElementById("lockedArea");
 
-const vaultUnlocked =
-    document.getElementById("vaultUnlocked");
+const unlockedArea =
+    document.getElementById("unlockedArea");
 
 const vaultPasswordInput =
-    document.getElementById("vaultPassword");
+    document.getElementById("vaultPasswordInput");
 
 const vaultStatus =
     document.getElementById("vaultStatus");
@@ -391,8 +495,8 @@ const addAccountCard =
 const issuerInput =
     document.getElementById("issuerInput");
 
-const accountNameInput =
-    document.getElementById("accountNameInput");
+const accountInput =
+    document.getElementById("accountInput");
 
 const secretInput =
     document.getElementById("secretInput");
@@ -404,16 +508,18 @@ const timer =
     document.getElementById("timer");
 
 
-/* =========================================================
-   STATUS HELPERS
-   ========================================================= */
+/* =====================================================
+   STATUS
+===================================================== */
 
 function showStatus(element, message, type) {
 
     element.textContent = message;
 
-    element.className = "status show " + type;
+    element.className =
+        "status show " + type;
 }
+
 
 function hideStatus(element) {
 
@@ -423,30 +529,29 @@ function hideStatus(element) {
 }
 
 
-/* =========================================================
-   CONFIGURATION CHECK
-   ========================================================= */
+/* =====================================================
+   SUPABASE STARTUP
+===================================================== */
 
-function checkConfig() {
+function startSupabase() {
 
     if (
-        !SUPABASE_URL ||
-        SUPABASE_URL === "https://ldkqgdbvqeyabzgftssc.supabase.co"
+        SUPABASE_URL ===
+        "https://ldkqgdbvqeyabzgftssc.supabase.co"
     ) {
 
         throw new Error(
-            "Supabase URL has not been added to the HTML file."
+            "You haven't entered your Supabase Project URL."
         );
     }
 
     if (
-        !SUPABASE_PUBLISHABLE_KEY ||
         SUPABASE_PUBLISHABLE_KEY ===
         "sb_publishable_g_OkyFkkQ_GeK7Y8uJb6hQ_Sw_Se0aS"
     ) {
 
         throw new Error(
-            "Supabase publishable key has not been added to the HTML file."
+            "You haven't entered your Supabase publishable key."
         );
     }
 
@@ -456,19 +561,9 @@ function checkConfig() {
     ) {
 
         throw new Error(
-            "Supabase JavaScript library failed to load."
+            "The Supabase library could not be loaded."
         );
     }
-}
-
-
-/* =========================================================
-   INITIALIZE SUPABASE
-   ========================================================= */
-
-function initializeSupabase() {
-
-    checkConfig();
 
     supabaseClient =
         window.supabase.createClient(
@@ -478,13 +573,556 @@ function initializeSupabase() {
 }
 
 
-/* =========================================================
-   AUTH MODE
-   ========================================================= */
+/* =====================================================
+   AUTH SCREEN
+===================================================== */
 
 function setAuthMode(mode) {
 
     authMode = mode;
+
+    hideStatus(authStatus);
+
+    if (mode === "signup") {
+
+        authTitle.textContent =
+            "Create Account";
+
+        authButton.textContent =
+            "Create Account";
+
+        switchAuthButton.textContent =
+            "Already have an account? Log in";
+
+        confirmPasswordInput
+            .classList
+            .remove("hidden");
+
+    } else {
+
+        authTitle.textContent =
+            "Log In";
+
+        authButton.textContent =
+            "Log In";
+
+        switchAuthButton.textContent =
+            "Need an account? Create one";
+
+        confirmPasswordInput
+            .classList
+            .add("hidden");
+    }
+}
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+async function handleAuth() {
+
+    hideStatus(authStatus);
+
+    const email =
+        emailInput.value.trim();
+
+    const password =
+        passwordInput.value;
+
+    const confirmPassword =
+        confirmPasswordInput.value;
+
+
+    if (!email) {
+
+        showStatus(
+            authStatus,
+            "Please enter your email.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (!password) {
+
+        showStatus(
+            authStatus,
+            "Please enter your password.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (
+        authMode === "signup" &&
+        password.length < 6
+    ) {
+
+        showStatus(
+            authStatus,
+            "Password must be at least 6 characters.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (
+        authMode === "signup" &&
+        password !== confirmPassword
+    ) {
+
+        showStatus(
+            authStatus,
+            "The passwords do not match.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    authButton.disabled = true;
+
+    authButton.textContent =
+        authMode === "signup"
+        ? "Creating..."
+        : "Logging in...";
+
+
+    try {
+
+        let result;
+
+
+        if (authMode === "signup") {
+
+            result =
+                await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password
+                });
+
+        } else {
+
+            result =
+                await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+        }
+
+
+        if (result.error) {
+
+            throw result.error;
+        }
+
+
+        if (authMode === "signup") {
+
+            if (result.data.session) {
+
+                showStatus(
+                    authStatus,
+                    "Account created successfully!",
+                    "success"
+                );
+
+            } else {
+
+                showStatus(
+                    authStatus,
+                    "Account created! Check your email to confirm your account, then log in.",
+                    "success"
+                );
+            }
+
+        } else {
+
+            showStatus(
+                authStatus,
+                "Login successful.",
+                "success"
+            );
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showStatus(
+            authStatus,
+            error.message ||
+            "Something went wrong.",
+            "error"
+        );
+
+    } finally {
+
+        authButton.disabled = false;
+
+        authButton.textContent =
+            authMode === "signup"
+            ? "Create Account"
+            : "Log In";
+    }
+}
+
+
+/* =====================================================
+   SHOW APP
+===================================================== */
+
+function showApp() {
+
+    authScreen.classList.add("hidden");
+
+    appScreen.classList.remove("hidden");
+
+    loggedInEmail.textContent =
+        currentUser.email;
+
+    loadCloudVault();
+}
+
+
+function showLogin() {
+
+    appScreen.classList.add("hidden");
+
+    authScreen.classList.remove("hidden");
+}
+
+
+/* =====================================================
+   SESSION
+===================================================== */
+
+async function checkSession() {
+
+    const result =
+        await supabaseClient.auth.getSession();
+
+    if (result.error) {
+
+        throw result.error;
+    }
+
+    if (result.data.session) {
+
+        currentUser =
+            result.data.session.user;
+
+        showApp();
+
+    } else {
+
+        showLogin();
+    }
+}
+
+
+/* =====================================================
+   AUTH LISTENER
+===================================================== */
+
+function setupAuthListener() {
+
+    supabaseClient.auth.onAuthStateChange(
+        function(event, session) {
+
+            if (session) {
+
+                currentUser =
+                    session.user;
+
+                showApp();
+
+            } else {
+
+                currentUser = null;
+
+                showLogin();
+            }
+        }
+    );
+}
+
+
+/* =====================================================
+   PBKDF2
+===================================================== */
+
+async function deriveKey(password, salt) {
+
+    const encoder =
+        new TextEncoder();
+
+    const passwordBytes =
+        encoder.encode(password);
+
+    const baseKey =
+        await crypto.subtle.importKey(
+            "raw",
+            passwordBytes,
+            "PBKDF2",
+            false,
+            ["deriveKey"]
+        );
+
+    return crypto.subtle.deriveKey(
+        {
+            name: "PBKDF2",
+            salt: salt,
+            iterations: 310000,
+            hash: "SHA-256"
+        },
+        baseKey,
+        {
+            name: "AES-GCM",
+            length: 256
+        },
+        false,
+        [
+            "encrypt",
+            "decrypt"
+        ]
+    );
+}
+
+
+/* =====================================================
+   ENCRYPT
+===================================================== */
+
+async function encryptVault(data, password) {
+
+    const encoder =
+        new TextEncoder();
+
+    const salt =
+        crypto.getRandomValues(
+            new Uint8Array(16)
+        );
+
+    const iv =
+        crypto.getRandomValues(
+            new Uint8Array(12)
+        );
+
+    const key =
+        await deriveKey(
+            password,
+            salt
+        );
+
+    const plaintext =
+        encoder.encode(
+            JSON.stringify(data)
+        );
+
+    const encrypted =
+        await crypto.subtle.encrypt(
+            {
+                name: "AES-GCM",
+                iv: iv
+            },
+            key,
+            plaintext
+        );
+
+    return {
+
+        version: 1,
+
+        salt:
+            bytesToBase64(salt),
+
+        iv:
+            bytesToBase64(iv),
+
+        data:
+            bytesToBase64(
+                new Uint8Array(encrypted)
+            )
+    };
+}
+
+
+/* =====================================================
+   DECRYPT
+===================================================== */
+
+async function decryptVault(
+    encrypted,
+    password
+) {
+
+    const salt =
+        base64ToBytes(
+            encrypted.salt
+        );
+
+    const iv =
+        base64ToBytes(
+            encrypted.iv
+        );
+
+    const ciphertext =
+        base64ToBytes(
+            encrypted.data
+        );
+
+    const key =
+        await deriveKey(
+            password,
+            salt
+        );
+
+    const decrypted =
+        await crypto.subtle.decrypt(
+            {
+                name: "AES-GCM",
+                iv: iv
+            },
+            key,
+            ciphertext
+        );
+
+    const decoder =
+        new TextDecoder();
+
+    return JSON.parse(
+        decoder.decode(decrypted)
+    );
+}
+
+
+/* =====================================================
+   BASE64
+===================================================== */
+
+function bytesToBase64(bytes) {
+
+    let binary = "";
+
+    for (
+        let i = 0;
+        i < bytes.length;
+        i++
+    ) {
+
+        binary +=
+            String.fromCharCode(
+                bytes[i]
+            );
+    }
+
+    return btoa(binary);
+}
+
+
+function base64ToBytes(base64) {
+
+    const binary =
+        atob(base64);
+
+    const bytes =
+        new Uint8Array(
+            binary.length
+        );
+
+    for (
+        let i = 0;
+        i < binary.length;
+        i++
+    ) {
+
+        bytes[i] =
+            binary.charCodeAt(i);
+    }
+
+    return bytes;
+}
+
+
+/* =====================================================
+   LOAD CLOUD VAULT
+===================================================== */
+
+async function loadCloudVault() {
+
+    if (!currentUser) {
+        return;
+    }
+
+    try {
+
+        const result =
+            await supabaseClient
+                .from("authenticator_vaults")
+                .select("encrypted_vault")
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .maybeSingle();
+
+
+        if (result.error) {
+
+            showStatus(
+                vaultStatus,
+                "Cloud vault error: " +
+                result.error.message,
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (
+            result.data &&
+            result.data.encrypted_vault
+        ) {
+
+            if (
+                typeof result.data.encrypted_vault
+                === "string"
+            ) {
+
+                cloudVault =
+                    JSON.parse(
+                        result.data.encrypted_vault
+                    );
+
+            } else {
+
+                cloudVault =
+                    result.data.encrypted_vault;
+            }
+
+        } else {
+
+            cloudVault = null;
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showStatus(
+            vaultStatus mode;
 
     hideStatus(authStatus);
 
