@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0f172a">
-<title>Nectar Authenticator</title>
+<title>KeyGuard</title>
 
-<!-- Official Supabase JavaScript client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -206,15 +205,14 @@ hr {
 
 <div class="container">
 
-  <h1>🔐 Nectar Authenticator</h1>
+  <h1>🔐 KeyGuard</h1>
+
   <p class="subtitle">
-    Encrypted cloud-synced TOTP authenticator
+    Secure cloud-synced authenticator
   </p>
 
 
-  <!-- =====================================================
-       AUTH SCREEN
-       ===================================================== -->
+  <!-- AUTH -->
 
   <div id="authScreen" class="card">
 
@@ -245,7 +243,6 @@ hr {
 
     </div>
 
-
     <button
       id="authButton"
       class="primary"
@@ -260,22 +257,17 @@ hr {
       </span>
     </button>
 
-    <p
-      id="authMessage"
-      class="message"
-    ></p>
+    <p id="authMessage" class="message"></p>
 
     <p class="small">
-      Your Supabase login password is separate from your
-      authenticator vault encryption.
+      Your KeyGuard vault is encrypted before it is
+      uploaded to the cloud.
     </p>
 
   </div>
 
 
-  <!-- =====================================================
-       APP
-       ===================================================== -->
+  <!-- APP -->
 
   <div id="app" class="hidden">
 
@@ -284,11 +276,14 @@ hr {
       <div class="topbar">
 
         <div>
-          <strong>My Account</strong>
+
+          <strong>KeyGuard Account</strong>
+
           <div
             id="userEmail"
             class="user-email"
           ></div>
+
         </div>
 
         <button onclick="logout()">
@@ -300,20 +295,15 @@ hr {
     </div>
 
 
-    <!-- ===================================================
-         VAULT PASSWORD
-         =================================================== -->
+    <!-- VAULT LOCK -->
 
-    <div
-      id="vaultLock"
-      class="card"
-    >
+    <div id="vaultLock" class="card">
 
       <h2>🔒 Unlock Vault</h2>
 
       <p class="small">
-        Your authenticator data is encrypted before it is
-        uploaded to Supabase.
+        Your authenticator secrets are encrypted before
+        being stored in Supabase.
       </p>
 
       <input
@@ -344,14 +334,9 @@ hr {
     </div>
 
 
-    <!-- ===================================================
-         DASHBOARD
-         =================================================== -->
+    <!-- DASHBOARD -->
 
-    <div
-      id="dashboard"
-      class="hidden"
-    >
+    <div id="dashboard" class="hidden">
 
       <div class="card">
 
@@ -394,9 +379,7 @@ hr {
       </div>
 
 
-      <!-- =================================================
-           ADD ACCOUNT
-           ================================================= -->
+      <!-- ADD ACCOUNT -->
 
       <div
         id="addAccountCard"
@@ -422,7 +405,7 @@ hr {
         >
 
         <p class="small">
-          Enter the Base32 TOTP secret supplied by the service.
+          Enter the Base32 TOTP secret provided by the service.
         </p>
 
         <hr>
@@ -463,9 +446,7 @@ hr {
       </div>
 
 
-      <!-- =================================================
-           ACCOUNTS
-           ================================================= -->
+      <!-- ACCOUNTS -->
 
       <div id="accounts"></div>
 
@@ -479,19 +460,8 @@ hr {
 <script>
 
 /* =========================================================
-   SUPABASE CONFIGURATION
+   SUPABASE CONFIG
    ========================================================= */
-
-/*
-  Replace ONLY these two values.
-
-  Never put:
-  - your Supabase project password
-  - a service-role/secret key
-  - TOTP secrets
-
-  into this website.
-*/
 
 const SUPABASE_URL =
   "https://ldkqgdbvqeyabzgftssc.supabase.co";
@@ -508,7 +478,7 @@ const supabaseClient =
 
 
 /* =========================================================
-   GLOBAL STATE
+   STATE
    ========================================================= */
 
 let currentUser = null;
@@ -521,9 +491,11 @@ let vaultSalt = null;
 
 let authMode = "login";
 
+let cloudEncryptedVault = null;
+
 
 /* =========================================================
-   BASE64 HELPERS
+   BASE64
    ========================================================= */
 
 function bytesToBase64(bytes) {
@@ -531,11 +503,7 @@ function bytesToBase64(bytes) {
   let binary = "";
 
   for (let i = 0; i < bytes.length; i++) {
-
-    binary += String.fromCharCode(
-      bytes[i]
-    );
-
+    binary += String.fromCharCode(bytes[i]);
   }
 
   return btoa(binary);
@@ -547,15 +515,11 @@ function base64ToBytes(base64) {
   const binary = atob(base64);
 
   const bytes =
-    new Uint8Array(
-      binary.length
-    );
+    new Uint8Array(binary.length);
 
   for (let i = 0; i < binary.length; i++) {
-
     bytes[i] =
       binary.charCodeAt(i);
-
   }
 
   return bytes;
@@ -574,7 +538,7 @@ function randomBytes(length) {
 
 
 /* =========================================================
-   PASSWORD → AES KEY
+   DERIVE AES KEY
    ========================================================= */
 
 async function deriveKey(
@@ -620,10 +584,823 @@ async function deriveKey(
     ]
 
   );
+
 }
 
 
 /* =========================================================
+   ENCRYPT VAULT
+   ========================================================= */
+
+async function encryptVault(
+  data,
+  password,
+  salt
+) {
+
+  const key =
+    await deriveKey(
+      password,
+      salt
+    );
+
+
+  const iv =
+    randomBytes(12);
+
+
+  const encoded =
+    new TextEncoder().encode(
+      JSON.stringify(data)
+    );
+
+
+  const encrypted =
+    await crypto.subtle.encrypt(
+
+      {
+        name: "AES-GCM",
+        iv: iv
+      },
+
+      key,
+
+      encoded
+
+    );
+
+
+  return {
+
+    salt:
+      bytesToBase64(salt),
+
+    iv:
+      bytesToBase64(iv),
+
+    data:
+      bytesToBase64(
+        new Uint8Array(encrypted)
+      )
+
+  };
+
+}
+
+
+/* =========================================================
+   DECRYPT VAULT
+   ========================================================= */
+
+async function decryptVault(
+  encryptedVault,
+  password
+) {
+
+  const salt =
+    base64ToBytes(
+      encryptedVault.salt
+    );
+
+
+  const iv =
+    base64ToBytes(
+      encryptedVault.iv
+    );
+
+
+  const encrypted =
+    base64ToBytes(
+      encryptedVault.data
+    );
+
+
+  const key =
+    await deriveKey(
+      password,
+      salt
+    );
+
+
+  const decrypted =
+    await crypto.subtle.decrypt(
+
+      {
+        name: "AES-GCM",
+        iv: iv
+      },
+
+      key,
+
+      encrypted
+
+    );
+
+
+  const text =
+    new TextDecoder().decode(
+      decrypted
+    );
+
+
+  return JSON.parse(text);
+
+}
+
+
+/* =========================================================
+   AUTH MODE
+   ========================================================= */
+
+function toggleAuthMode() {
+
+  if (authMode === "login") {
+
+    authMode = "signup";
+
+
+    document.getElementById(
+      "authTitle"
+    ).textContent =
+      "Create KeyGuard Account";
+
+
+    document.getElementById(
+      "authButton"
+    ).textContent =
+      "Create Account";
+
+
+    document.getElementById(
+      "toggleText"
+    ).textContent =
+      "Already have an account? Login";
+
+
+    document.getElementById(
+      "confirmPasswordBox"
+    ).classList.remove(
+      "hidden"
+    );
+
+
+    document.getElementById(
+      "password"
+    ).autocomplete =
+      "new-password";
+
+  } else {
+
+    authMode = "login";
+
+
+    document.getElementById(
+      "authTitle"
+    ).textContent =
+      "Login";
+
+
+    document.getElementById(
+      "authButton"
+    ).textContent =
+      "Login";
+
+
+    document.getElementById(
+      "toggleText"
+    ).textContent =
+      "Create an account";
+
+
+    document.getElementById(
+      "confirmPasswordBox"
+    ).classList.add(
+      "hidden"
+    );
+
+
+    document.getElementById(
+      "password"
+    ).autocomplete =
+      "current-password";
+
+  }
+
+
+  document.getElementById(
+    "authMessage"
+  ).textContent = "";
+
+}
+
+
+/* =========================================================
+   LOGIN / SIGNUP
+   ========================================================= */
+
+async function handleAuth() {
+
+  const email =
+    document.getElementById(
+      "email"
+    ).value.trim();
+
+
+  const password =
+    document.getElementById(
+      "password"
+    ).value;
+
+
+  const message =
+    document.getElementById(
+      "authMessage"
+    );
+
+
+  message.textContent =
+    "Please wait...";
+
+
+  if (!email) {
+
+    message.textContent =
+      "Enter your email.";
+
+    return;
+
+  }
+
+
+  if (password.length < 8) {
+
+    message.textContent =
+      "Password must be at least 8 characters.";
+
+    return;
+
+  }
+
+
+  try {
+
+    if (authMode === "signup") {
+
+      const confirmPassword =
+        document.getElementById(
+          "confirmPassword"
+        ).value;
+
+
+      if (
+        password !==
+        confirmPassword
+      ) {
+
+        message.textContent =
+          "Passwords do not match.";
+
+        return;
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth.signUp({
+
+          email:
+            email,
+
+          password:
+            password
+
+        });
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      if (!data.session) {
+
+        message.textContent =
+          "Account created. Check your email to confirm your account, then log in.";
+
+        return;
+
+      }
+
+    } else {
+
+      const {
+        error
+      } =
+        await supabaseClient.auth.signInWithPassword({
+
+          email:
+            email,
+
+          password:
+            password
+
+        });
+
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      error.message ||
+      "Authentication failed.";
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH STATE
+   ========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+
+  async (
+    event,
+    session
+  ) => {
+
+    if (
+      session &&
+      session.user
+    ) {
+
+      currentUser =
+        session.user;
+
+      showApp();
+
+    } else {
+
+      currentUser =
+        null;
+
+      showAuth();
+
+    }
+
+  }
+
+);
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+async function initialize() {
+
+  try {
+
+    const {
+      data
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if (
+      data &&
+      data.session &&
+      data.session.user
+    ) {
+
+      currentUser =
+        data.session.user;
+
+      showApp();
+
+    } else {
+
+      showAuth();
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    showAuth();
+
+  }
+
+}
+
+
+/* =========================================================
+   SHOW AUTH
+   ========================================================= */
+
+function showAuth() {
+
+  document.getElementById(
+    "authScreen"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "app"
+  ).classList.add(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   SHOW APP
+   ========================================================= */
+
+async function showApp() {
+
+  document.getElementById(
+    "authScreen"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "app"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "userEmail"
+  ).textContent =
+    currentUser.email || "";
+
+
+  await loadCloudVault();
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function logout() {
+
+  lockVault();
+
+  await supabaseClient.auth.signOut();
+
+}
+
+
+/* =========================================================
+   LOAD CLOUD VAULT
+   ========================================================= */
+
+async function loadCloudVault() {
+
+  const message =
+    document.getElementById(
+      "vaultMessage"
+    );
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from(
+          "authenticator_vaults"
+        )
+        .select(
+          "encrypted_vault"
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .maybeSingle();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (
+      data &&
+      data.encrypted_vault
+    ) {
+
+      cloudEncryptedVault =
+        typeof data.encrypted_vault === "string"
+          ? JSON.parse(
+              data.encrypted_vault
+            )
+          : data.encrypted_vault;
+
+
+      message.textContent =
+        "Cloud vault found. Enter your vault password.";
+
+    } else {
+
+      cloudEncryptedVault =
+        null;
+
+
+      message.textContent =
+        "No vault found yet. Create a new vault.";
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "Could not load your cloud vault. Check your table, RLS policies and Data API settings.";
+
+  }
+
+}
+
+
+/* =========================================================
+   CREATE NEW VAULT
+   ========================================================= */
+
+async function createNewVault() {
+
+  if (cloudEncryptedVault) {
+
+    const okay =
+      confirm(
+        "A vault already exists. Creating a new vault will replace it. Continue?"
+      );
+
+
+    if (!okay) {
+      return;
+    }
+
+  }
+
+
+  const password =
+    document.getElementById(
+      "vaultPassword"
+    ).value;
+
+
+  const message =
+    document.getElementById(
+      "vaultMessage"
+    );
+
+
+  if (password.length < 10) {
+
+    message.textContent =
+      "Vault password must be at least 10 characters.";
+
+    return;
+
+  }
+
+
+  vault = {
+    accounts: []
+  };
+
+
+  vaultPassword =
+    password;
+
+
+  vaultSalt =
+    randomBytes(16);
+
+
+  const saved =
+    await saveCloudVault();
+
+
+  if (!saved) {
+
+    vault = null;
+
+    vaultPassword = null;
+
+    vaultSalt = null;
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    "vaultPassword"
+  ).value = "";
+
+
+  openDashboard();
+
+}
+
+
+/* =========================================================
+   UNLOCK VAULT
+   ========================================================= */
+
+async function unlockVault() {
+
+  const password =
+    document.getElementById(
+      "vaultPassword"
+    ).value;
+
+
+  const message =
+    document.getElementById(
+      "vaultMessage"
+    );
+
+
+  if (!cloudEncryptedVault) {
+
+    message.textContent =
+      "No cloud vault exists yet. Use Create New Vault.";
+
+    return;
+
+  }
+
+
+  if (!password) {
+
+    message.textContent =
+      "Enter your vault password.";
+
+    return;
+
+  }
+
+
+  try {
+
+    const decrypted =
+      await decryptVault(
+        cloudEncryptedVault,
+        password
+      );
+
+
+    if (
+      !decrypted ||
+      !Array.isArray(
+        decrypted.accounts
+      )
+    ) {
+
+      throw new Error(
+        "Invalid vault"
+      );
+
+    }
+
+
+    vault =
+      decrypted;
+
+
+    vaultPassword =
+      password;
+
+
+    vaultSalt =
+      base64ToBytes(
+        cloudEncryptedVault.salt
+      );
+
+
+    document.getElementById(
+      "vaultPassword"
+    ).value = "";
+
+
+    openDashboard();
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "Incorrect vault password or damaged vault.";
+
+  }
+
+}
+
+
+/* =========================================================
+   OPEN DASHBOARD
+   ========================================================= */
+
+function openDashboard() {
+
+  document.getElementById(
+    "vaultLock"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "dashboard"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  renderAccounts();
+
+}
+
+
+/* =========================================================
+   LOCK
+   ========================================================= */
+
+function lockVault() {
+
+  vault = null;
+
+  vaultPassword = null;
+
+  vaultSalt = null;
+
+
+  document.getElementById(
+    "dashboard"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "vaultLock"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "vaultPassword"
+  ).value = "";
+
+
+  document.getElementById(
+    "syncStatus"
+  ).textContent =
+    "Vault locked.";
+
+}
+
+
+/* =========================================================
+   SAVE CLOUD VAULT
+   ========================================================= */
+
+async function saveCloudVault() {
+
+  if (
+    !vault ||
+    !vaultPassword ||
+    !vaultSalt ||
+   =======
    ENCRYPT
    ========================================================= */
 
