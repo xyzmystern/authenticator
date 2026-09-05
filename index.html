@@ -2,29 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080b12">
 <meta name="color-scheme" content="dark">
+
 <title>KeyGuard</title>
 
 <style>
 :root{
   --bg:#080b12;
-  --bg2:#0d111b;
   --surface:#111722;
   --surface2:#171e2c;
+  --input:#0b1019;
   --border:#252e40;
-  --border2:#303b50;
+  --border2:#344158;
   --text:#f8fafc;
   --muted:#8995a8;
   --muted2:#647086;
   --accent:#7c8cff;
   --accent2:#9b8cff;
-  --success:#45d483;
   --danger:#ff6677;
-  --danger-bg:#2a151c;
-  --white:#fff;
-  --shadow:0 20px 60px rgba(0,0,0,.28);
+  --danger-bg:#24151b;
 }
 
 *{
@@ -39,12 +37,15 @@ body{
   margin:0;
   min-height:100vh;
   background:
-    radial-gradient(circle at 50% -10%,rgba(124,140,255,.13),transparent 35%),
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(124,140,255,.15),
+      transparent 35%
+    ),
     var(--bg);
   color:var(--text);
   font-family:
     Inter,
-    ui-sans-serif,
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -62,12 +63,12 @@ button{
 }
 
 .hidden{
-  display:none!important;
+  display:none !important;
 }
 
-/* =========================
-   APP SHELL
-========================= */
+/* =========================================
+   APP
+========================================= */
 
 .app{
   width:min(100%,760px);
@@ -75,16 +76,16 @@ button{
   padding:24px 18px 70px;
 }
 
-/* =========================
+/* =========================================
    HEADER
-========================= */
+========================================= */
 
 .header{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:16px;
-  margin-bottom:26px;
+  margin-bottom:22px;
 }
 
 .brand{
@@ -100,7 +101,11 @@ button{
   place-items:center;
   border-radius:14px;
   background:
-    linear-gradient(145deg,#7c8cff,#6257db);
+    linear-gradient(
+      145deg,
+      #7c8cff,
+      #6257db
+    );
   box-shadow:
     0 8px 30px rgba(124,140,255,.25);
   font-size:23px;
@@ -108,13 +113,12 @@ button{
 
 .brand-title{
   font-size:21px;
-  line-height:1.1;
   font-weight:800;
   letter-spacing:-.4px;
 }
 
 .brand-subtitle{
-  margin-top:4px;
+  margin-top:3px;
   color:var(--muted);
   font-size:13px;
 }
@@ -131,37 +135,13 @@ button{
 
 .lock-button:hover{
   color:var(--text);
-  border-color:var(--border2);
   background:var(--surface2);
+  border-color:var(--border2);
 }
 
-/* =========================
-   SECTION HEADER
-========================= */
-
-.section-header{
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  gap:15px;
-  margin-bottom:12px;
-}
-
-.section-title{
-  margin:0;
-  font-size:17px;
-  font-weight:750;
-  letter-spacing:-.2px;
-}
-
-.account-count{
-  color:var(--muted2);
-  font-size:12px;
-}
-
-/* =========================
+/* =========================================
    CARD
-========================= */
+========================================= */
 
 .card{
   background:
@@ -173,7 +153,8 @@ button{
     var(--surface);
   border:1px solid var(--border);
   border-radius:20px;
-  box-shadow:0 8px 30px rgba(0,0,0,.12);
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.12);
 }
 
 .panel{
@@ -181,9 +162,71 @@ button{
   margin-top:18px;
 }
 
-/* =========================
-   ACCOUNT CARD
-========================= */
+/* =========================================
+   SEARCH
+========================================= */
+
+.search-wrap{
+  position:relative;
+  margin-bottom:18px;
+}
+
+.search-icon{
+  position:absolute;
+  left:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#647086;
+  pointer-events:none;
+  font-size:17px;
+}
+
+.search{
+  width:100%;
+  height:44px;
+  padding:0 13px 0 38px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  outline:none;
+  background:#0d131e;
+  color:var(--text);
+}
+
+.search::placeholder{
+  color:#566277;
+}
+
+.search:focus{
+  border-color:var(--accent);
+  box-shadow:
+    0 0 0 3px rgba(124,140,255,.10);
+}
+
+/* =========================================
+   SECTION HEADER
+========================================= */
+
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.section-title{
+  margin:0;
+  font-size:17px;
+  font-weight:750;
+}
+
+.account-count{
+  color:var(--muted2);
+  font-size:12px;
+}
+
+/* =========================================
+   ACCOUNT
+========================================= */
 
 .account-card{
   position:relative;
@@ -192,13 +235,12 @@ button{
   overflow:hidden;
   transition:
     transform .2s,
-    border-color .2s,
-    background .2s;
+    border-color .2s;
 }
 
 .account-card:hover{
   transform:translateY(-1px);
-  border-color:#344158;
+  border-color:var(--border2);
   background:var(--surface2);
 }
 
@@ -216,15 +258,8 @@ button{
   place-items:center;
   border-radius:14px;
   background:#20283a;
-  font-size:23px;
-  overflow:hidden;
   border:1px solid rgba(255,255,255,.05);
-}
-
-.logo img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+  font-size:23px;
 }
 
 .account-info{
@@ -253,19 +288,18 @@ button{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:15px;
+  gap:12px;
   margin-top:19px;
 }
 
 .code{
-  margin:0;
   color:var(--text);
   font-family:
     "SFMono-Regular",
     Consolas,
     "Liberation Mono",
     monospace;
-  font-size:35px;
+  font-size:34px;
   line-height:1;
   font-weight:800;
   letter-spacing:4px;
@@ -282,17 +316,16 @@ button{
   color:#dbe2ee;
   font-size:12px;
   font-weight:700;
-  transition:.2s;
 }
 
 .copy-mini:hover{
-  background:#232d40;
+  background:#263147;
 }
 
 .timer-row{
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   margin-top:11px;
 }
 
@@ -302,11 +335,11 @@ button{
 }
 
 .timer strong{
-  color:#dce3ef;
+  color:#e5eaf2;
 }
 
 .expiring{
-  color:#ffcf70;
+  color:#ffd166 !important;
 }
 
 .progress{
@@ -323,7 +356,11 @@ button{
   width:100%;
   border-radius:inherit;
   background:
-    linear-gradient(90deg,var(--accent),var(--accent2));
+    linear-gradient(
+      90deg,
+      var(--accent),
+      var(--accent2)
+    );
   transition:width .5s linear;
 }
 
@@ -342,12 +379,10 @@ button{
   color:#dce3ef;
   font-size:12px;
   font-weight:700;
-  transition:.2s;
 }
 
 .action:hover{
-  background:#202a3c;
-  border-color:var(--border2);
+  background:#222d40;
 }
 
 .action.delete{
@@ -356,13 +391,9 @@ button{
   border-color:#45202a;
 }
 
-.action.delete:hover{
-  background:#371a22;
-}
-
-/* =========================
+/* =========================================
    ADD ACCOUNT
-========================= */
+========================================= */
 
 .add-header{
   display:flex;
@@ -393,7 +424,7 @@ button{
 }
 
 .field{
-  margin-bottom:12px;
+  margin-bottom:13px;
 }
 
 .field-label{
@@ -413,10 +444,9 @@ input{
   border:1px solid var(--border2);
   border-radius:11px;
   outline:none;
-  background:#0b1019;
+  background:var(--input);
   color:var(--text);
   font-size:14px;
-  transition:.2s;
 }
 
 input::placeholder{
@@ -425,13 +455,14 @@ input::placeholder{
 
 input:focus{
   border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(124,140,255,.10);
+  box-shadow:
+    0 0 0 3px rgba(124,140,255,.10);
 }
 
 .add-actions{
   display:flex;
   gap:9px;
-  margin-top:5px;
+  margin-top:4px;
 }
 
 .btn{
@@ -472,33 +503,9 @@ input:focus{
   line-height:1.5;
 }
 
-/* =========================
-   SEARCH
-========================= */
-
-.search-wrap{
-  position:relative;
-  margin:18px 0 4px;
-}
-
-.search-icon{
-  position:absolute;
-  left:13px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#647086;
-  pointer-events:none;
-}
-
-.search{
-  height:42px;
-  padding-left:38px;
-  background:#0d131e;
-}
-
-/* =========================
+/* =========================================
    BACKUP
-========================= */
+========================================= */
 
 .backup-grid{
   display:grid;
@@ -522,12 +529,13 @@ input:focus{
   background:#2b171e;
 }
 
-/* =========================
-   EMPTY STATE
-========================= */
+/* =========================================
+   EMPTY
+========================================= */
 
 .empty{
-  padding:34px 20px;
+  padding:35px 20px;
+  margin-top:12px;
   text-align:center;
 }
 
@@ -545,33 +553,34 @@ input:focus{
 .empty-title{
   margin:0;
   font-size:15px;
-  font-weight:750;
 }
 
 .empty-text{
-  max-width:340px;
+  max-width:350px;
   margin:7px auto 0;
   color:var(--muted);
   font-size:12px;
   line-height:1.55;
 }
 
-/* =========================
+/* =========================================
    TOAST
-========================= */
+========================================= */
 
 #toast{
   position:fixed;
   left:50%;
   bottom:22px;
-  z-index:30;
-  transform:translate(-50%,20px);
+  z-index:200;
+  transform:
+    translate(-50%,20px);
   padding:11px 15px;
   border:1px solid var(--border2);
   border-radius:12px;
   background:#171e2b;
   color:#eef2f7;
-  box-shadow:var(--shadow);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.3);
   font-size:12px;
   font-weight:700;
   opacity:0;
@@ -581,12 +590,13 @@ input:focus{
 
 #toast.show{
   opacity:1;
-  transform:translate(-50%,0);
+  transform:
+    translate(-50%,0);
 }
 
-/* =========================
-   UNLOCK SCREEN
-========================= */
+/* =========================================
+   UNLOCK
+========================================= */
 
 #unlockScreen{
   position:fixed;
@@ -622,7 +632,11 @@ input:focus{
   margin:0 auto 17px;
   border-radius:21px;
   background:
-    linear-gradient(145deg,#7c8cff,#6257db);
+    linear-gradient(
+      145deg,
+      #7c8cff,
+      #6257db
+    );
   box-shadow:
     0 15px 45px rgba(124,140,255,.25);
   font-size:30px;
@@ -630,7 +644,7 @@ input:focus{
 
 .unlock-title{
   margin:0;
-  font-size:26px;
+  font-size:27px;
   letter-spacing:-.7px;
 }
 
@@ -648,11 +662,6 @@ input:focus{
   line-height:1.5;
 }
 
-.unlock-button{
-  width:100%;
-  margin-top:3px;
-}
-
 .password-field{
   position:relative;
 }
@@ -663,13 +672,18 @@ input:focus{
 
 .eye{
   position:absolute;
-  right:8px;
+  right:5px;
   top:4px;
   width:38px;
   height:38px;
   border:0;
   background:transparent;
   color:#718096;
+}
+
+.unlock-button{
+  width:100%;
+  margin-top:6px;
 }
 
 .unlock-message{
@@ -693,18 +707,17 @@ input:focus{
   line-height:1.5;
 }
 
-/* =========================
+/* =========================================
    MOBILE
-========================= */
+========================================= */
 
 @media(max-width:520px){
 
   .app{
-    padding:17px 13px 50px;
-  }
-
-  .header{
-    margin-bottom:21px;
+    padding:
+      17px
+      13px
+      50px;
   }
 
   .brand-icon{
@@ -727,10 +740,6 @@ input:focus{
   .code{
     font-size:29px;
     letter-spacing:3px;
-  }
-
-  .copy-mini{
-    padding:8px 10px;
   }
 
   .add-actions{
@@ -756,11 +765,12 @@ input:focus{
 </style>
 </head>
 
+
 <body>
 
-<!-- =========================
+<!-- =========================================
      UNLOCK SCREEN
-========================= -->
+========================================= -->
 
 <div id="unlockScreen">
 
@@ -768,7 +778,9 @@ input:focus{
 
     <div class="unlock-brand">
 
-      <div class="unlock-icon">🔐</div>
+      <div class="unlock-icon">
+        🔐
+      </div>
 
       <h1 class="unlock-title">
         KeyGuard
@@ -780,31 +792,41 @@ input:focus{
 
     </div>
 
+
+    <!-- FIRST SETUP -->
+
     <div id="firstSetup">
 
       <p class="unlock-copy">
-        Create a strong password to encrypt your authenticator vault.
+        Create a password to encrypt your authenticator vault.
       </p>
 
+
       <div class="field">
+
         <label class="field-label">
           Password
         </label>
 
         <div class="password-field">
+
           <input
             id="newPassword"
             type="password"
             autocomplete="new-password"
             placeholder="Create a password">
+
           <button
+            id="showNewPassword"
             class="eye"
-            type="button"
-            onclick="togglePassword('newPassword',this)">
+            type="button">
             ◉
           </button>
+
         </div>
+
       </div>
+
 
       <div class="field">
 
@@ -820,14 +842,18 @@ input:focus{
 
       </div>
 
+
       <button
+        id="createVaultButton"
         class="btn btn-primary unlock-button"
-        onclick="createVault()">
+        type="button">
         Create encrypted vault
       </button>
 
     </div>
 
+
+    <!-- EXISTING VAULT -->
 
     <div id="existingVault" class="hidden">
 
@@ -835,27 +861,29 @@ input:focus{
         Enter your password to unlock your encrypted vault.
       </p>
 
+
       <div class="password-field">
 
         <input
           id="unlockPassword"
           type="password"
           autocomplete="current-password"
-          placeholder="Vault password"
-          onkeydown="if(event.key==='Enter') unlockVault()">
+          placeholder="Vault password">
 
         <button
+          id="showUnlockPassword"
           class="eye"
-          type="button"
-          onclick="togglePassword('unlockPassword',this)">
+          type="button">
           ◉
         </button>
 
       </div>
 
+
       <button
+        id="unlockVaultButton"
         class="btn btn-primary unlock-button"
-        onclick="unlockVault()">
+        type="button">
         Unlock KeyGuard
       </button>
 
@@ -870,8 +898,9 @@ input:focus{
 
     <div class="security-note">
       <span>🛡️</span>
+
       <span>
-        Your vault stays in this browser's local storage and its contents
+        Your vault stays in this browser and its contents
         are encrypted before being stored.
       </span>
     </div>
@@ -881,9 +910,9 @@ input:focus{
 </div>
 
 
-<!-- =========================
-     MAIN APP
-========================= -->
+<!-- =========================================
+     MAIN APPLICATION
+========================================= -->
 
 <main class="app">
 
@@ -896,6 +925,7 @@ input:focus{
       </div>
 
       <div>
+
         <div class="brand-title">
           KeyGuard
         </div>
@@ -903,14 +933,17 @@ input:focus{
         <div class="brand-subtitle">
           Local TOTP authenticator
         </div>
+
       </div>
 
     </div>
 
+
     <button
+      id="headerLockButton"
       class="lock-button"
-      title="Lock vault"
-      onclick="lockVault()">
+      type="button"
+      title="Lock vault">
       🔒
     </button>
 
@@ -930,8 +963,7 @@ input:focus{
       class="search"
       type="search"
       placeholder="Search accounts..."
-      autocomplete="off"
-      oninput="render()">
+      autocomplete="off">
 
   </div>
 
@@ -953,6 +985,7 @@ input:focus{
       </span>
 
     </div>
+
 
     <div id="accounts"></div>
 
@@ -1028,14 +1061,17 @@ input:focus{
     <div class="add-actions">
 
       <button
+        id="addAccountButton"
         class="btn btn-primary"
-        onclick="addAccount()">
+        type="button">
         Add account
       </button>
 
+
       <button
+        id="qrButton"
         class="btn btn-secondary"
-        onclick="showQRInstructions()">
+        type="button">
         📷 Scan QR
       </button>
 
@@ -1043,7 +1079,7 @@ input:focus{
 
 
     <p class="helper">
-      Secrets are encrypted before being saved to this browser.
+      TOTP secrets are encrypted before being saved to this browser.
     </p>
 
   </section>
@@ -1077,20 +1113,25 @@ input:focus{
     <div class="backup-grid">
 
       <button
+        id="exportButton"
         class="btn btn-secondary"
-        onclick="exportBackup()">
+        type="button">
         Export backup
       </button>
 
+
       <button
+        id="importButton"
         class="btn btn-secondary"
-        onclick="document.getElementById('backupFile').click()">
+        type="button">
         Import backup
       </button>
 
+
       <button
+        id="lockButton"
         class="btn danger-button"
-        onclick="lockVault()">
+        type="button">
         🔒 Lock vault
       </button>
 
@@ -1101,18 +1142,21 @@ input:focus{
       id="backupFile"
       type="file"
       accept=".auth,.json"
-      hidden
-      onchange="importBackup(event)">
+      hidden>
 
   </section>
 
 </main>
 
 
+<!-- TOAST -->
+
 <div id="toast"></div>
 
 
 <script>
+"use strict";
+
 
 /* =========================================================
    STORAGE
@@ -1124,53 +1168,79 @@ let vault = null;
 let password = null;
 let accounts = [];
 
+let toastTimer = null;
+
 
 /* =========================================================
-   UI
+   DOM HELPERS
 ========================================================= */
 
-let toastTimeout;
-
-function showToast(message){
-
-  const toast =
-    document.getElementById("toast");
-
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  clearTimeout(toastTimeout);
-
-  toastTimeout =
-    setTimeout(
-      () => toast.classList.remove("show"),
-      1800
-    );
+function $(id){
+  return document.getElementById(id);
 }
 
 
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(message){
+
+  const toast = $("toast");
+
+  if(!toast){
+    return;
+  }
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(
+    function(){
+      toast.classList.remove("show");
+    },
+    1800
+  );
+}
+
+
+/* =========================================================
+   PASSWORD VISIBILITY
+========================================================= */
+
 function togglePassword(id,button){
 
-  const input =
-    document.getElementById(id);
+  const input = $(id);
+
+  if(!input){
+    return;
+  }
 
   if(input.type === "password"){
 
     input.type = "text";
-    button.textContent = "◌";
+
+    if(button){
+      button.textContent = "◌";
+    }
 
   }else{
 
     input.type = "password";
-    button.textContent = "◉";
+
+    if(button){
+      button.textContent = "◉";
+    }
 
   }
-
 }
 
 
 /* =========================================================
-   STORAGE / CRYPTO
+   CRYPTO
 ========================================================= */
 
 function randomBytes(length){
@@ -1178,7 +1248,6 @@ function randomBytes(length){
   return crypto.getRandomValues(
     new Uint8Array(length)
   );
-
 }
 
 
@@ -1186,12 +1255,15 @@ function bytesToBase64(bytes){
 
   let binary = "";
 
-  bytes.forEach(
-    b => binary += String.fromCharCode(b)
-  );
+  for(let i = 0; i < bytes.length; i++){
+
+    binary += String.fromCharCode(
+      bytes[i]
+    );
+
+  }
 
   return btoa(binary);
-
 }
 
 
@@ -1200,9 +1272,15 @@ function base64ToBytes(base64){
   const binary = atob(base64);
 
   const bytes =
-    new Uint8Array(binary.length);
+    new Uint8Array(
+      binary.length
+    );
 
-  for(let i=0;i<binary.length;i++){
+  for(
+    let i = 0;
+    i < binary.length;
+    i++
+  ){
 
     bytes[i] =
       binary.charCodeAt(i);
@@ -1210,25 +1288,27 @@ function base64ToBytes(base64){
   }
 
   return bytes;
-
 }
 
 
-async function deriveKey(password,salt){
+async function deriveKey(passwordValue,salt){
 
   const material =
     await crypto.subtle.importKey(
       "raw",
-      new TextEncoder().encode(password),
+      new TextEncoder().encode(
+        passwordValue
+      ),
       "PBKDF2",
       false,
       ["deriveKey"]
     );
 
+
   return crypto.subtle.deriveKey(
     {
       name:"PBKDF2",
-      salt,
+      salt:salt,
       iterations:310000,
       hash:"SHA-256"
     },
@@ -1238,9 +1318,11 @@ async function deriveKey(password,salt){
       length:256
     },
     false,
-    ["encrypt","decrypt"]
+    [
+      "encrypt",
+      "decrypt"
+    ]
   );
-
 }
 
 
@@ -1249,87 +1331,17 @@ async function encryptData(data,key){
   const iv =
     randomBytes(12);
 
+
+  const encoded =
+    new TextEncoder().encode(
+      JSON.stringify(data)
+    );
+
+
   const encrypted =
     await crypto.subtle.encrypt(
       {
         name:"AES-GCM",
-        iv
+        iv:iv
       },
-      key,
-      new TextEncoder().encode(
-        JSON.stringify(data)
-      )
-    );
-
-  return {
-    iv:bytesToBase64(iv),
-    data:bytesToBase64(
-      new Uint8Array(encrypted)
-    )
-  };
-
-}
-
-
-async function decryptData(payload,key){
-
-  const decrypted =
-    await crypto.subtle.decrypt(
-      {
-        name:"AES-GCM",
-        iv:base64ToBytes(payload.iv)
-      },
-      key,
-      base64ToBytes(payload.data)
-    );
-
-  return JSON.parse(
-    new TextDecoder().decode(decrypted)
-  );
-
-}
-
-
-/* =========================================================
-   VAULT
-========================================================= */
-
-async function createVault(){
-
-  const p =
-    document.getElementById(
-      "newPassword"
-    ).value;
-
-  const confirm =
-    document.getElementById(
-      "confirmPassword"
-    ).value;
-
-
-  if(p.length < 10){
-
-    showUnlockMessage(
-      "Use at least 10 characters."
-    );
-
-    return;
-
-  }
-
-
-  if(p !== confirm){
-
-    showUnlockMessage(
-      "Passwords do not match."
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    const salt =
-     
+ 
