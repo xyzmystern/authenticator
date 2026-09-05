@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<title>Secure Authenticator</title>
+<title>KeyGuard</title>
 
 <style>
 *{box-sizing:border-box}
@@ -162,13 +162,14 @@ button{
 
 <div id="unlockScreen">
  <div id="unlockBox" class="card">
-  <h1>🔐 Authenticator</h1>
+  <h1>🔐 KeyGuard</h1>
+
   <p class="subtitle">
    Your vault is encrypted locally.
   </p>
 
   <div id="firstSetup">
-   <p>Create a password to protect your authenticator.</p>
+   <p>Create a password to protect your KeyGuard vault.</p>
 
    <input id="newPassword"
           type="password"
@@ -184,14 +185,14 @@ button{
   </div>
 
   <div id="existingVault" class="hidden">
-   <p>Enter your password to unlock your vault.</p>
+   <p>Enter your password to unlock your KeyGuard vault.</p>
 
    <input id="unlockPassword"
           type="password"
           placeholder="Vault password">
 
    <button class="primary" onclick="unlockVault()">
-    Unlock
+    Unlock KeyGuard
    </button>
   </div>
 
@@ -202,7 +203,7 @@ button{
 
 <div class="container">
 
-<h1>🔐 Secure Authenticator</h1>
+<h1>🔐 KeyGuard</h1>
 
 <p class="subtitle">
  Local TOTP authenticator
@@ -242,15 +243,16 @@ button{
 <h2>Backup</h2>
 
 <p class="small">
- Export creates an encrypted backup file. You need your vault
- password to restore it.
+ Export creates an encrypted KeyGuard backup file.
+ You need your vault password to restore it.
 </p>
 
 <button class="secondary" onclick="exportBackup()">
  💾 Export encrypted backup
 </button>
 
-<button class="secondary" onclick="document.getElementById('backupFile').click()">
+<button class="secondary"
+        onclick="document.getElementById('backupFile').click()">
  📥 Import encrypted backup
 </button>
 
@@ -261,7 +263,7 @@ button{
        onchange="importBackup(event)">
 
 <button class="danger" onclick="lockVault()">
- 🔒 Lock
+ 🔒 Lock KeyGuard
 </button>
 
 </div>
@@ -278,7 +280,7 @@ button{
    STORAGE
 ========================================================= */
 
-const VAULT_KEY = "secure_authenticator_vault_v1";
+const VAULT_KEY = "keyguard_vault_v1";
 
 let vault = null;
 let password = null;
@@ -296,14 +298,21 @@ function randomBytes(length){
 
 function bytesToBase64(bytes){
  let binary = "";
- bytes.forEach(b => binary += String.fromCharCode(b));
+
+ bytes.forEach(
+  b => binary += String.fromCharCode(b)
+ );
+
  return btoa(binary);
 }
 
 
 function base64ToBytes(base64){
+
  const binary = atob(base64);
- const bytes = new Uint8Array(binary.length);
+
+ const bytes =
+ new Uint8Array(binary.length);
 
  for(let i=0;i<binary.length;i++){
   bytes[i] = binary.charCodeAt(i);
@@ -345,7 +354,8 @@ async function deriveKey(password,salt){
 
 async function encryptData(data,key){
 
- const iv = randomBytes(12);
+ const iv =
+ randomBytes(12);
 
  const encrypted =
  await crypto.subtle.encrypt(
@@ -361,6 +371,7 @@ async function encryptData(data,key){
 
  return {
   iv:bytesToBase64(iv),
+
   data:bytesToBase64(
    new Uint8Array(encrypted)
   )
@@ -395,48 +406,80 @@ async function decryptData(payload,key){
 async function createVault(){
 
  const p =
- document.getElementById("newPassword").value;
+ document.getElementById(
+  "newPassword"
+ ).value;
 
  const confirm =
- document.getElementById("confirmPassword").value;
+ document.getElementById(
+  "confirmPassword"
+ ).value;
+
 
  if(p.length < 10){
+
   showUnlockMessage(
    "Use a password of at least 10 characters."
   );
+
   return;
  }
 
+
  if(p !== confirm){
+
   showUnlockMessage(
    "Passwords do not match."
   );
+
   return;
  }
 
- const salt = randomBytes(16);
+
+ const salt =
+ randomBytes(16);
+
 
  const key =
- await deriveKey(p,salt);
+ await deriveKey(
+  p,
+  salt
+ );
+
 
  const encrypted =
- await encryptData([],key);
+ await encryptData(
+  [],
+  key
+ );
+
 
  vault = {
+
   version:1,
-  salt:bytesToBase64(salt),
+
+  salt:
+  bytesToBase64(
+   salt
+  ),
+
   encrypted
+
  };
+
 
  localStorage.setItem(
   VAULT_KEY,
   JSON.stringify(vault)
  );
 
+
  password = p;
  accounts = [];
 
+
  unlockScreen(false);
+
  render();
 
 }
@@ -445,20 +488,33 @@ async function createVault(){
 async function unlockVault(){
 
  const p =
- document.getElementById("unlockPassword").value;
+ document.getElementById(
+  "unlockPassword"
+ ).value;
+
 
  try{
 
   const stored =
   JSON.parse(
-   localStorage.getItem(VAULT_KEY)
+   localStorage.getItem(
+    VAULT_KEY
+   )
   );
 
+
   const salt =
-  base64ToBytes(stored.salt);
+  base64ToBytes(
+   stored.salt
+  );
+
 
   const key =
-  await deriveKey(p,salt);
+  await deriveKey(
+   p,
+   salt
+  );
+
 
   accounts =
   await decryptData(
@@ -466,12 +522,15 @@ async function unlockVault(){
    key
   );
 
+
   vault = stored;
   password = p;
+
 
   unlockScreen(false);
 
   render();
+
 
  }catch{
 
@@ -487,13 +546,24 @@ async function unlockVault(){
 async function saveVault(){
 
  const salt =
- base64ToBytes(vault.salt);
+ base64ToBytes(
+  vault.salt
+ );
+
 
  const key =
- await deriveKey(password,salt);
+ await deriveKey(
+  password,
+  salt
+ );
+
 
  vault.encrypted =
- await encryptData(accounts,key);
+ await encryptData(
+  accounts,
+  key
+ );
+
 
  localStorage.setItem(
   VAULT_KEY,
@@ -508,9 +578,11 @@ function lockVault(){
  password = null;
  accounts = [];
 
+
  document.getElementById(
   "unlockPassword"
  ).value = "";
+
 
  unlockScreen(true);
 
@@ -524,13 +596,18 @@ function unlockScreen(show){
  ).style.display =
  show ? "flex" : "none";
 
+
  const exists =
- localStorage.getItem(VAULT_KEY);
+ localStorage.getItem(
+  VAULT_KEY
+ );
+
 
  document.getElementById(
   "firstSetup"
  ).style.display =
  exists ? "none" : "block";
+
 
  document.getElementById(
   "existingVault"
@@ -544,7 +621,8 @@ function showUnlockMessage(message){
 
  document.getElementById(
   "unlockMessage"
- ).textContent = message;
+ ).textContent =
+ message;
 
 }
 
@@ -561,27 +639,39 @@ function base32ToBytes(secret){
  .replace(/[\s-]/g,"")
  .replace(/=+$/,"");
 
+
  const alphabet =
  "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
+
  let bits = "";
+
 
  for(const char of secret){
 
   const value =
   alphabet.indexOf(char);
 
-  if(value < 0)
+
+  if(value < 0){
+
    throw new Error(
     "Invalid Base32 secret."
    );
 
+  }
+
+
   bits +=
-  value.toString(2).padStart(5,"0");
+  value
+  .toString(2)
+  .padStart(5,"0");
 
  }
 
+
  const bytes = [];
+
 
  for(
   let i=0;
@@ -598,6 +688,7 @@ function base32ToBytes(secret){
 
  }
 
+
  return new Uint8Array(bytes);
 
 }
@@ -612,20 +703,24 @@ function counterBytes(counter){
  const buffer =
  new ArrayBuffer(8);
 
+
  const view =
  new DataView(buffer);
+
 
  view.setUint32(
  0,
  Math.floor(
-  counter / 0x100000000
- )
+   counter / 0x100000000
+  )
  );
+
 
  view.setUint32(
  4,
  counter >>> 0
  );
+
 
  return buffer;
 
@@ -646,6 +741,7 @@ async function hotp(secret,counter){
   ["sign"]
  );
 
+
  const signature =
  new Uint8Array(
   await crypto.subtle.sign(
@@ -655,10 +751,12 @@ async function hotp(secret,counter){
   )
  );
 
+
  const offset =
  signature[
-  signature.length-1
+  signature.length - 1
  ] & 15;
+
 
  const number =
  (
@@ -668,9 +766,13 @@ async function hotp(secret,counter){
   (signature[offset+3] & 255)
  );
 
+
  return String(
   number % 1000000
- ).padStart(6,"0");
+ ).padStart(
+  6,
+  "0"
+ );
 
 }
 
@@ -679,8 +781,9 @@ async function generateCode(secret){
 
  const counter =
  Math.floor(
-  Date.now()/1000/30
+  Date.now() / 1000 / 30
  );
+
 
  return hotp(
   secret,
@@ -701,10 +804,12 @@ async function addAccount(){
   "issuer"
  ).value.trim();
 
+
  const account =
  document.getElementById(
   "account"
  ).value.trim();
+
 
  const secret =
  document.getElementById(
@@ -714,41 +819,61 @@ async function addAccount(){
  .replace(/\s+/g,"")
  .toUpperCase();
 
+
  if(!secret){
-  alert("Enter a TOTP secret.");
+
+  alert(
+   "Enter a TOTP secret."
+  );
+
   return;
+
  }
+
 
  try{
 
-  base32ToBytes(secret);
+  base32ToBytes(
+   secret
+  );
 
  }catch(error){
 
-  alert(error.message);
+  alert(
+   error.message
+  );
+
   return;
 
  }
 
+
  accounts.push({
+
   issuer,
   account,
   secret
+
  });
+
 
  await saveVault();
 
+
  document.getElementById(
   "issuer"
- ).value="";
+ ).value = "";
+
 
  document.getElementById(
   "account"
- ).value="";
+ ).value = "";
+
 
  document.getElementById(
   "secret"
- ).value="";
+ ).value = "";
+
 
  render();
 
@@ -757,11 +882,18 @@ async function addAccount(){
 
 async function deleteAccount(index){
 
- if(!confirm(
-  "Delete this account?"
- )) return;
+ if(
+  !confirm(
+   "Delete this account?"
+  )
+ ) return;
 
- accounts.splice(index,1);
+
+ accounts.splice(
+  index,
+  1
+ );
+
 
  await saveVault();
 
@@ -780,27 +912,37 @@ function getLogo(issuer){
  (issuer || "")
  .toLowerCase();
 
+
  if(name.includes("discord"))
   return "💬";
+
 
  if(name.includes("google"))
   return "🔵";
 
+
  if(name.includes("github"))
   return "🐙";
+
 
  if(name.includes("microsoft"))
   return "🪟";
 
+
  if(name.includes("apple"))
   return "";
+
 
  if(name.includes("amazon"))
   return "📦";
 
- if(name.includes("facebook") ||
-    name.includes("meta"))
+
+ if(
+  name.includes("facebook") ||
+  name.includes("meta")
+ )
   return "Ⓜ️";
+
 
  return "🔐";
 
@@ -818,6 +960,7 @@ async function render(){
   "accounts"
  );
 
+
  if(accounts.length === 0){
 
   root.innerHTML =
@@ -827,9 +970,11 @@ async function render(){
    </p>
   </div>`;
 
+
   return;
 
  }
+
 
  root.innerHTML =
  accounts.map(
@@ -844,6 +989,7 @@ async function render(){
    </div>
 
    <div>
+
     <div class="name">
      ${escapeHTML(
       a.account || "Account"
@@ -852,12 +998,14 @@ async function render(){
 
     <div class="issuer">
      ${escapeHTML(
-      a.issuer || "Authenticator"
+      a.issuer || "KeyGuard"
      )}
     </div>
+
    </div>
 
   </div>
+
 
   <div
    class="code"
@@ -865,15 +1013,18 @@ async function render(){
    ------
   </div>
 
+
   <div
    class="timer"
    id="timer-${i}">
    Loading...
   </div>
 
+
   <div class="progress">
    <span id="bar-${i}"></span>
   </div>
+
 
   <div class="buttons">
 
@@ -882,6 +1033,7 @@ async function render(){
     onclick="copyCode(${i})">
     📋 Copy
    </button>
+
 
    <button
     class="danger"
@@ -896,6 +1048,7 @@ async function render(){
  `
  ).join("");
 
+
  await updateCodes();
 
 }
@@ -905,19 +1058,22 @@ async function updateCodes(){
 
  const seconds =
  Math.floor(
-  Date.now()/1000
+  Date.now() / 1000
  );
 
+
  const remaining =
- 30-(seconds%30);
+ 30 - (seconds % 30);
+
 
  const percentage =
- remaining/30*100;
+ remaining / 30 * 100;
+
 
  for(
- let i=0;
- i<accounts.length;
- i++
+  let i=0;
+  i<accounts.length;
+  i++
  ){
 
   try{
@@ -927,32 +1083,39 @@ async function updateCodes(){
     accounts[i].secret
    );
 
+
    const codeElement =
    document.getElementById(
     `code-${i}`
    );
 
+
    if(codeElement)
     codeElement.textContent =
     code;
+
 
    const timer =
    document.getElementById(
     `timer-${i}`
    );
 
+
    if(timer)
     timer.textContent =
     `Changes in ${remaining}s`;
+
 
    const bar =
    document.getElementById(
     `bar-${i}`
    );
 
+
    if(bar)
     bar.style.width =
-    percentage+"%";
+    percentage + "%";
+
 
   }catch{}
 
@@ -968,13 +1131,18 @@ async function copyCode(index){
   accounts[index].secret
  );
 
+
  try{
 
   await navigator.clipboard.writeText(
    code
   );
 
-  alert("Code copied.");
+
+  alert(
+   "Code copied."
+  );
+
 
  }catch{
 
@@ -991,7 +1159,7 @@ function escapeHTML(text){
 
  return String(text).replace(
   /[&<>"']/g,
-  char=>({
+  char => ({
    "&":"&amp;",
    "<":"&lt;",
    ">":"&gt;",
@@ -1011,15 +1179,19 @@ async function exportBackup(){
 
  if(!password){
 
-  alert("Unlock the vault first.");
+  alert(
+   "Unlock the vault first."
+  );
+
   return;
 
  }
 
+
  const backup =
  JSON.stringify(
   {
-   type:"secure-authenticator-backup",
+   type:"keyguard-backup",
    version:1,
    vault
   },
@@ -1027,26 +1199,41 @@ async function exportBackup(){
   2
  );
 
+
  const blob =
  new Blob(
   [backup],
-  {type:"application/json"}
+  {
+   type:"application/json"
+  }
  );
 
+
  const url =
- URL.createObjectURL(blob);
+ URL.createObjectURL(
+  blob
+ );
+
 
  const link =
- document.createElement("a");
+ document.createElement(
+  "a"
+ );
 
- link.href=url;
 
- link.download=
- "authenticator-backup.auth";
+ link.href = url;
+
+
+ link.download =
+ "keyguard-backup.auth";
+
 
  link.click();
 
- URL.revokeObjectURL(url);
+
+ URL.revokeObjectURL(
+  url
+ );
 
 }
 
@@ -1056,19 +1243,26 @@ async function importBackup(event){
  const file =
  event.target.files[0];
 
- if(!file) return;
+
+ if(!file)
+  return;
+
 
  try{
 
   const text =
   await file.text();
 
+
   const imported =
-  JSON.parse(text);
+  JSON.parse(
+   text
+  );
+
 
   if(
    imported.type !==
-   "secure-authenticator-backup"
+   "keyguard-backup"
   ){
 
    throw new Error(
@@ -1077,11 +1271,14 @@ async function importBackup(event){
 
   }
 
+
   if(
    !confirm(
     "Importing will replace the current vault. Continue?"
    )
-  ) return;
+  )
+   return;
+
 
   localStorage.setItem(
    VAULT_KEY,
@@ -1090,11 +1287,14 @@ async function importBackup(event){
    )
   );
 
+
   alert(
    "Backup imported. Unlock it using the password that protected the backup."
   );
 
+
   location.reload();
+
 
  }catch(error){
 
@@ -1104,7 +1304,8 @@ async function importBackup(event){
 
  }
 
- event.target.value="";
+
+ event.target.value = "";
 
 }
 
@@ -1116,8 +1317,8 @@ async function importBackup(event){
 function showQRInstructions(){
 
  alert(
-  "QR scanning needs a QR-code library or the browser's BarcodeDetector API.\\n\\n" +
-  "This version accepts TOTP secrets manually.\\n\\n" +
+  "QR scanning needs a QR-code library or the browser's BarcodeDetector API.\n\n" +
+  "This version accepts TOTP secrets manually.\n\n" +
   "Next upgrade: scan standard otpauth:// QR codes and automatically fill the account."
  );
 
@@ -1129,16 +1330,22 @@ function showQRInstructions(){
 ========================================================= */
 
 unlockScreen(
- !localStorage.getItem(VAULT_KEY)
+ !localStorage.getItem(
+  VAULT_KEY
+ )
 );
 
+
 if(
- localStorage.getItem(VAULT_KEY)
+ localStorage.getItem(
+  VAULT_KEY
+ )
 ){
 
  unlockScreen(true);
 
 }
+
 
 setInterval(
  updateCodes,
@@ -1148,5 +1355,4 @@ setInterval(
 </script>
 
 </body>
-  </html>
-    
+ </html>
