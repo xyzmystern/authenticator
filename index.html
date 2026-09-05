@@ -1,1347 +1,1297 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080b12">
-<meta name="color-scheme" content="dark">
 
-<title>KeyGuard</title>
-
-<style>
-:root{
-  --bg:#080b12;
-  --surface:#111722;
-  --surface2:#171e2c;
-  --input:#0b1019;
-  --border:#252e40;
-  --border2:#344158;
-  --text:#f8fafc;
-  --muted:#8995a8;
-  --muted2:#647086;
-  --accent:#7c8cff;
-  --accent2:#9b8cff;
-  --danger:#ff6677;
-  --danger-bg:#24151b;
-}
-
-*{
-  box-sizing:border-box;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  margin:0;
-  min-height:100vh;
-  background:
-    radial-gradient(
-      circle at 50% -10%,
-      rgba(124,140,255,.15),
-      transparent 35%
-    ),
-    var(--bg);
-  color:var(--text);
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-}
-
-button,
-input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-.hidden{
-  display:none !important;
-}
-
-/* =========================================
-   APP
-========================================= */
-
-.app{
-  width:min(100%,760px);
-  margin:auto;
-  padding:24px 18px 70px;
-}
-
-/* =========================================
-   HEADER
-========================================= */
-
-.header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  margin-bottom:22px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:13px;
-}
-
-.brand-icon{
-  width:46px;
-  height:46px;
-  display:grid;
-  place-items:center;
-  border-radius:14px;
-  background:
-    linear-gradient(
-      145deg,
-      #7c8cff,
-      #6257db
-    );
-  box-shadow:
-    0 8px 30px rgba(124,140,255,.25);
-  font-size:23px;
-}
-
-.brand-title{
-  font-size:21px;
-  font-weight:800;
-  letter-spacing:-.4px;
-}
-
-.brand-subtitle{
-  margin-top:3px;
-  color:var(--muted);
-  font-size:13px;
-}
-
-.lock-button{
-  width:42px;
-  height:42px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:var(--surface);
-  color:var(--muted);
-  transition:.2s;
-}
-
-.lock-button:hover{
-  color:var(--text);
-  background:var(--surface2);
-  border-color:var(--border2);
-}
-
-/* =========================================
-   CARD
-========================================= */
-
-.card{
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.025),
-      rgba(255,255,255,.01)
-    ),
-    var(--surface);
-  border:1px solid var(--border);
-  border-radius:20px;
-  box-shadow:
-    0 8px 30px rgba(0,0,0,.12);
-}
-
-.panel{
-  padding:20px;
-  margin-top:18px;
-}
-
-/* =========================================
-   SEARCH
-========================================= */
-
-.search-wrap{
-  position:relative;
-  margin-bottom:18px;
-}
-
-.search-icon{
-  position:absolute;
-  left:13px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#647086;
-  pointer-events:none;
-  font-size:17px;
-}
-
-.search{
-  width:100%;
-  height:44px;
-  padding:0 13px 0 38px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  outline:none;
-  background:#0d131e;
-  color:var(--text);
-}
-
-.search::placeholder{
-  color:#566277;
-}
-
-.search:focus{
-  border-color:var(--accent);
-  box-shadow:
-    0 0 0 3px rgba(124,140,255,.10);
-}
-
-/* =========================================
-   SECTION HEADER
-========================================= */
-
-.section-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.section-title{
-  margin:0;
-  font-size:17px;
-  font-weight:750;
-}
-
-.account-count{
-  color:var(--muted2);
-  font-size:12px;
-}
-
-/* =========================================
-   ACCOUNT
-========================================= */
-
-.account-card{
-  position:relative;
-  padding:18px;
-  margin-top:12px;
-  overflow:hidden;
-  transition:
-    transform .2s,
-    border-color .2s;
-}
-
-.account-card:hover{
-  transform:translateY(-1px);
-  border-color:var(--border2);
-  background:var(--surface2);
-}
-
-.account-top{
-  display:flex;
-  align-items:center;
-  gap:13px;
-}
-
-.logo{
-  width:48px;
-  height:48px;
-  flex:0 0 48px;
-  display:grid;
-  place-items:center;
-  border-radius:14px;
-  background:#20283a;
-  border:1px solid rgba(255,255,255,.05);
-  font-size:23px;
-}
-
-.account-info{
-  min-width:0;
-  flex:1;
-}
-
-.account-name{
-  font-size:15px;
-  font-weight:750;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.account-issuer{
-  margin-top:3px;
-  color:var(--muted);
-  font-size:12px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.code-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-top:19px;
-}
-
-.code{
-  color:var(--text);
-  font-family:
-    "SFMono-Regular",
-    Consolas,
-    "Liberation Mono",
-    monospace;
-  font-size:34px;
-  line-height:1;
-  font-weight:800;
-  letter-spacing:4px;
-  user-select:none;
-  cursor:pointer;
-}
-
-.copy-mini{
-  flex:0 0 auto;
-  padding:9px 11px;
-  border:1px solid var(--border2);
-  border-radius:10px;
-  background:#1a2231;
-  color:#dbe2ee;
-  font-size:12px;
-  font-weight:700;
-}
-
-.copy-mini:hover{
-  background:#263147;
-}
-
-.timer-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:11px;
-}
-
-.timer{
-  color:var(--muted);
-  font-size:12px;
-}
-
-.timer strong{
-  color:#e5eaf2;
-}
-
-.expiring{
-  color:#ffd166 !important;
-}
-
-.progress{
-  height:5px;
-  margin-top:10px;
-  overflow:hidden;
-  border-radius:99px;
-  background:#252e3e;
-}
-
-.progress span{
-  display:block;
-  height:100%;
-  width:100%;
-  border-radius:inherit;
-  background:
-    linear-gradient(
-      90deg,
-      var(--accent),
-      var(--accent2)
-    );
-  transition:width .5s linear;
-}
-
-.account-actions{
-  display:flex;
-  gap:8px;
-  margin-top:15px;
-}
-
-.action{
-  min-height:37px;
-  padding:9px 12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#171f2d;
-  color:#dce3ef;
-  font-size:12px;
-  font-weight:700;
-}
-
-.action:hover{
-  background:#222d40;
-}
-
-.action.delete{
-  color:#ff9aa5;
-  background:var(--danger-bg);
-  border-color:#45202a;
-}
-
-/* =========================================
-   ADD ACCOUNT
-========================================= */
-
-.add-header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:18px;
-}
-
-.add-icon{
-  width:40px;
-  height:40px;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:#20283a;
-  font-size:19px;
-}
-
-.add-title{
-  margin:0;
-  font-size:16px;
-}
-
-.add-description{
-  margin:3px 0 0;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.field{
-  margin-bottom:13px;
-}
-
-.field-label{
-  display:block;
-  margin-bottom:6px;
-  color:#aeb8c8;
-  font-size:11px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-input{
-  width:100%;
-  height:46px;
-  padding:0 13px;
-  border:1px solid var(--border2);
-  border-radius:11px;
-  outline:none;
-  background:var(--input);
-  color:var(--text);
-  font-size:14px;
-}
-
-input::placeholder{
-  color:#566277;
-}
-
-input:focus{
-  border-color:var(--accent);
-  box-shadow:
-    0 0 0 3px rgba(124,140,255,.10);
-}
-
-.add-actions{
-  display:flex;
-  gap:9px;
-  margin-top:4px;
-}
-
-.btn{
-  min-height:43px;
-  padding:11px 15px;
-  border:0;
-  border-radius:11px;
-  font-size:13px;
-  font-weight:750;
-  transition:.2s;
-}
-
-.btn-primary{
-  flex:1;
-  background:#f8fafc;
-  color:#0c111a;
-}
-
-.btn-primary:hover{
-  background:#fff;
-  transform:translateY(-1px);
-}
-
-.btn-secondary{
-  background:#20293a;
-  color:#e7ebf2;
-  border:1px solid var(--border);
-}
-
-.btn-secondary:hover{
-  background:#293448;
-}
-
-.helper{
-  margin:13px 0 0;
-  color:var(--muted2);
-  font-size:11px;
-  line-height:1.5;
-}
-
-/* =========================================
-   BACKUP
-========================================= */
-
-.backup-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-  margin-top:15px;
-}
-
-.backup-grid .btn{
-  width:100%;
-}
-
-.danger-button{
-  grid-column:1/-1;
-  color:#ff9aa5;
-  background:#211319;
-  border:1px solid #3b2028;
-}
-
-.danger-button:hover{
-  background:#2b171e;
-}
-
-/* =========================================
-   EMPTY
-========================================= */
-
-.empty{
-  padding:35px 20px;
-  margin-top:12px;
-  text-align:center;
-}
-
-.empty-icon{
-  width:58px;
-  height:58px;
-  display:grid;
-  place-items:center;
-  margin:0 auto 14px;
-  border-radius:17px;
-  background:#1a2231;
-  font-size:25px;
-}
-
-.empty-title{
-  margin:0;
-  font-size:15px;
-}
-
-.empty-text{
-  max-width:350px;
-  margin:7px auto 0;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.55;
-}
-
-/* =========================================
-   TOAST
-========================================= */
-
-#toast{
-  position:fixed;
-  left:50%;
-  bottom:22px;
-  z-index:200;
-  transform:
-    translate(-50%,20px);
-  padding:11px 15px;
-  border:1px solid var(--border2);
-  border-radius:12px;
-  background:#171e2b;
-  color:#eef2f7;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.3);
-  font-size:12px;
-  font-weight:700;
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-}
-
-#toast.show{
-  opacity:1;
-  transform:
-    translate(-50%,0);
-}
-
-/* =========================================
-   UNLOCK
-========================================= */
-
-#unlockScreen{
-  position:fixed;
-  inset:0;
-  z-index:100;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(124,140,255,.16),
-      transparent 38%
-    ),
-    #080b12;
-}
-
-.unlock-box{
-  width:min(100%,420px);
-  padding:28px;
-}
-
-.unlock-brand{
-  text-align:center;
-}
-
-.unlock-icon{
-  width:68px;
-  height:68px;
-  display:grid;
-  place-items:center;
-  margin:0 auto 17px;
-  border-radius:21px;
-  background:
-    linear-gradient(
-      145deg,
-      #7c8cff,
-      #6257db
-    );
-  box-shadow:
-    0 15px 45px rgba(124,140,255,.25);
-  font-size:30px;
-}
-
-.unlock-title{
-  margin:0;
-  font-size:27px;
-  letter-spacing:-.7px;
-}
-
-.unlock-subtitle{
-  margin:7px 0 25px;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.5;
-}
-
-.unlock-copy{
-  margin:0 0 14px;
-  color:#c5cddb;
-  font-size:13px;
-  line-height:1.5;
-}
-
-.password-field{
-  position:relative;
-}
-
-.password-field input{
-  padding-right:48px;
-}
-
-.eye{
-  position:absolute;
-  right:5px;
-  top:4px;
-  width:38px;
-  height:38px;
-  border:0;
-  background:transparent;
-  color:#718096;
-}
-
-.unlock-button{
-  width:100%;
-  margin-top:6px;
-}
-
-.unlock-message{
-  min-height:18px;
-  margin-top:13px;
-  color:#ff9aa5;
-  text-align:center;
-  font-size:12px;
-}
-
-.security-note{
-  display:flex;
-  gap:9px;
-  margin-top:20px;
-  padding:11px;
-  border:1px solid var(--border);
-  border-radius:11px;
-  background:#0d131d;
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.5;
-}
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media(max-width:520px){
-
-  .app{
-    padding:
-      17px
-      13px
-      50px;
-  }
-
-  .brand-icon{
-    width:42px;
-    height:42px;
-  }
-
-  .brand-title{
-    font-size:19px;
-  }
-
-  .panel{
-    padding:16px;
-  }
-
-  .account-card{
-    padding:16px;
-  }
-
-  .code{
-    font-size:29px;
-    letter-spacing:3px;
-  }
-
-  .add-actions{
-    flex-direction:column;
-  }
-
-  .btn-secondary{
-    width:100%;
-  }
-
-  .backup-grid{
-    grid-template-columns:1fr;
-  }
-
-  .danger-button{
-    grid-column:auto;
-  }
-
-  .unlock-box{
-    padding:23px 19px;
-  }
-}
-</style>
-</head>
-
-
-<body>
-
-<!-- =========================================
-     UNLOCK SCREEN
-========================================= -->
-
-<div id="unlockScreen">
-
-  <div class="card unlock-box">
-
-    <div class="unlock-brand">
-
-      <div class="unlock-icon">
-        🔐
-      </div>
-
-      <h1 class="unlock-title">
-        KeyGuard
-      </h1>
-
-      <p class="unlock-subtitle">
-        Your private authenticator, protected locally.
-      </p>
-
-    </div>
-
-
-    <!-- FIRST SETUP -->
-
-    <div id="firstSetup">
-
-      <p class="unlock-copy">
-        Create a password to encrypt your authenticator vault.
-      </p>
-
-
-      <div class="field">
-
-        <label class="field-label">
-          Password
-        </label>
-
-        <div class="password-field">
-
-          <input
-            id="newPassword"
-            type="password"
-            autocomplete="new-password"
-            placeholder="Create a password">
-
-          <button
-            id="showNewPassword"
-            class="eye"
-            type="button">
-            ◉
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <div class="field">
-
-        <label class="field-label">
-          Confirm password
-        </label>
-
-        <input
-          id="confirmPassword"
-          type="password"
-          autocomplete="new-password"
-          placeholder="Enter it again">
-
-      </div>
-
-
-      <button
-        id="createVaultButton"
-        class="btn btn-primary unlock-button"
-        type="button">
-        Create encrypted vault
-      </button>
-
-    </div>
-
-
-    <!-- EXISTING VAULT -->
-
-    <div id="existingVault" class="hidden">
-
-      <p class="unlock-copy">
-        Enter your password to unlock your encrypted vault.
-      </p>
-
-
-      <div class="password-field">
-
-        <input
-          id="unlockPassword"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Vault password">
-
-        <button
-          id="showUnlockPassword"
-          class="eye"
-          type="button">
-          ◉
-        </button>
-
-      </div>
-
-
-      <button
-        id="unlockVaultButton"
-        class="btn btn-primary unlock-button"
-        type="button">
-        Unlock KeyGuard
-      </button>
-
-    </div>
-
-
-    <div
-      id="unlockMessage"
-      class="unlock-message">
-    </div>
-
-
-    <div class="security-note">
-      <span>🛡️</span>
-
-      <span>
-        Your vault stays in this browser and its contents
-        are encrypted before being stored.
-      </span>
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- =========================================
-     MAIN APPLICATION
-========================================= -->
-
-<main class="app">
-
-  <header class="header">
-
-    <div class="brand">
-
-      <div class="brand-icon">
-        🔐
-      </div>
-
-      <div>
-
-        <div class="brand-title">
-          KeyGuard
-        </div>
-
-        <div class="brand-subtitle">
-          Local TOTP authenticator
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <button
-      id="headerLockButton"
-      class="lock-button"
-      type="button"
-      title="Lock vault">
-      🔒
-    </button>
-
-  </header>
-
-
-  <!-- SEARCH -->
-
-  <div class="search-wrap">
-
-    <span class="search-icon">
-      ⌕
-    </span>
-
-    <input
-      id="search"
-      class="search"
-      type="search"
-      placeholder="Search accounts..."
-      autocomplete="off">
-
-  </div>
-
-
-  <!-- ACCOUNTS -->
-
-  <section>
-
-    <div class="section-header">
-
-      <h2 class="section-title">
-        Your accounts
-      </h2>
-
-      <span
-        id="accountCount"
-        class="account-count">
-        0 accounts
-      </span>
-
-    </div>
-
-
-    <div id="accounts"></div>
-
-  </section>
-
-
-  <!-- ADD ACCOUNT -->
-
-  <section class="card panel">
-
-    <div class="add-header">
-
-      <div class="add-icon">
-        ＋
-      </div>
-
-      <div>
-
-        <h2 class="add-title">
-          Add account
-        </h2>
-
-        <p class="add-description">
-          Add a TOTP secret from your service.
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <div class="field">
-
-      <label class="field-label">
-        Service
-      </label>
-
-      <input
-        id="issuer"
-        placeholder="e.g. Discord, Google, GitHub">
-
-    </div>
-
-
-    <div class="field">
-
-      <label class="field-label">
-        Account
-      </label>
-
-      <input
-        id="account"
-        placeholder="name@example.com">
-
-    </div>
-
-
-    <div class="field">
-
-      <label class="field-label">
-        TOTP secret
-      </label>
-
-      <input
-        id="secret"
-        autocapitalize="characters"
-        spellcheck="false"
-        placeholder="JBSWY3DPEHPK3PXP">
-
-    </div>
-
-
-    <div class="add-actions">
-
-      <button
-        id="addAccountButton"
-        class="btn btn-primary"
-        type="button">
-        Add account
-      </button>
-
-
-      <button
-        id="qrButton"
-        class="btn btn-secondary"
-        type="button">
-        📷 Scan QR
-      </button>
-
-    </div>
-
-
-    <p class="helper">
-      TOTP secrets are encrypted before being saved to this browser.
-    </p>
-
-  </section>
-
-
-  <!-- BACKUP -->
-
-  <section class="card panel">
-
-    <div class="add-header">
-
-      <div class="add-icon">
-        💾
-      </div>
-
-      <div>
-
-        <h2 class="add-title">
-          Backup & security
-        </h2>
-
-        <p class="add-description">
-          Protect your accounts against browser data loss.
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <div class="backup-grid">
-
-      <button
-        id="exportButton"
-        class="btn btn-secondary"
-        type="button">
-        Export backup
-      </button>
-
-
-      <button
-        id="importButton"
-        class="btn btn-secondary"
-        type="button">
-        Import backup
-      </button>
-
-
-      <button
-        id="lockButton"
-        class="btn danger-button"
-        type="button">
-        🔒 Lock vault
-      </button>
-
-    </div>
-
-
-    <input
-      id="backupFile"
-      type="file"
-      accept=".auth,.json"
-      hidden>
-
-  </section>
-
-</main>
-
-
-<!-- TOAST -->
-
-<div id="toast"></div>
-
-
-<script>
-"use strict";
-
-
-/* =========================================================
-   STORAGE
-========================================================= */
-
-const VAULT_KEY = "keyguard_vault_v1";
-
-let vault = null;
-let password = null;
-let accounts = [];
-
-let toastTimer = null;
-
-
-/* =========================================================
-   DOM HELPERS
-========================================================= */
-
-function $(id){
-  return document.getElementById(id);
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-function showToast(message){
-
-  const toast = $("toast");
-
-  if(!toast){
-    return;
-  }
-
-  toast.textContent = message;
-
-  toast.classList.add("show");
-
-  clearTimeout(toastTimer);
-
-  toastTimer = setTimeout(
-    function(){
-      toast.classList.remove("show");
-    },
-    1800
-  );
-}
-
-
-/* =========================================================
-   PASSWORD VISIBILITY
-========================================================= */
-
-function togglePassword(id,button){
-
-  const input = $(id);
-
-  if(!input){
-    return;
-  }
-
-  if(input.type === "password"){
-
-    input.type = "text";
-
-    if(button){
-      button.textContent = "◌";
-    }
-
-  }else{
-
-    input.type = "password";
-
-    if(button){
-      button.textContent = "◉";
-    }
-
-  }
-}
-
-
-/* =========================================================
-   CRYPTO
-========================================================= */
-
-function randomBytes(length){
-
-  return crypto.getRandomValues(
-    new Uint8Array(length)
-  );
-}
-
-
-function bytesToBase64(bytes){
-
-  let binary = "";
-
-  for(let i = 0; i < bytes.length; i++){
-
-    binary += String.fromCharCode(
-      bytes[i]
-    );
-
-  }
-
-  return btoa(binary);
-}
-
-
-function base64ToBytes(base64){
-
-  const binary = atob(base64);
-
-  const bytes =
-    new Uint8Array(
-      binary.length
-    );
-
-  for(
-    let i = 0;
-    i < binary.length;
-    i++
-  ){
-
-    bytes[i] =
-      binary.charCodeAt(i);
-
-  }
-
-  return bytes;
-}
-
-
-async function deriveKey(passwordValue,salt){
-
-  const material =
-    await crypto.subtle.importKey(
-      "raw",
-      new TextEncoder().encode(
-        passwordValue
-      ),
-      "PBKDF2",
-      false,
-      ["deriveKey"]
-    );
-
-
-  return crypto.subtle.deriveKey(
-    {
-      name:"PBKDF2",
-      salt:salt,
-      iterations:310000,
-      hash:"SHA-256"
-    },
-    material,
-    {
-      name:"AES-GCM",
-      length:256
-    },
-    false,
-    [
-      "encrypt",
-      "decrypt"
-    ]
-  );
-}
-
-
-async function encryptData(data,key){
-
-  const iv =
-    randomBytes(12);
-
-
-  const encoded =
-    new TextEncoder().encode(
-      JSON.stringify(data)
-    );
-
-
-  const encrypted =
-    await crypto.subtle.encrypt(
-      {
-        name:"AES-GCM",
-        iv:iv
-      },
- 
+<html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1">  
+<meta name="theme-color" content="#0b1020">  
+<title>KeyGuard</title>  <style>  
+*{box-sizing:border-box}  
+  
+body{  
+ margin:0;  
+ background:#0b1020;  
+ color:#f8fafc;  
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif  
+}  
+  
+.container{  
+ max-width:650px;  
+ margin:auto;  
+ padding:22px 15px 50px  
+}  
+  
+h1{margin:0;font-size:30px}  
+.subtitle{color:#94a3b8;margin-top:5px}  
+  
+.card{  
+ background:#151c2f;  
+ border:1px solid #29334d;  
+ border-radius:18px;  
+ padding:18px;  
+ margin-top:16px  
+}  
+  
+input{  
+ width:100%;  
+ padding:13px;  
+ margin:6px 0 12px;  
+ border-radius:10px;  
+ border:1px solid #334155;  
+ background:#0f172a;  
+ color:white;  
+ font-size:16px  
+}  
+  
+button{  
+ border:0;  
+ border-radius:10px;  
+ padding:12px 15px;  
+ font-weight:700;  
+ cursor:pointer;  
+ margin:4px  
+}  
+  
+.primary{background:white;color:#0f172a}  
+.secondary{background:#263149;color:white}  
+.danger{background:#421b24;color:#fecaca}  
+  
+.hidden{display:none}  
+  
+.account{  
+ display:flex;  
+ align-items:center;  
+ gap:13px  
+}  
+  
+.logo{  
+ width:48px;  
+ height:48px;  
+ border-radius:12px;  
+ display:flex;  
+ align-items:center;  
+ justify-content:center;  
+ background:#263149;  
+ font-size:24px;  
+ overflow:hidden  
+}  
+  
+.logo img{  
+ width:100%;  
+ height:100%;  
+ object-fit:cover  
+}  
+  
+.name{  
+ font-size:17px;  
+ font-weight:700  
+}  
+  
+.issuer{  
+ color:#94a3b8;  
+ font-size:13px  
+}  
+  
+.code{  
+ font:800 34px monospace;  
+ letter-spacing:5px;  
+ margin-top:14px  
+}  
+  
+.timer{  
+ color:#94a3b8;  
+ font-size:13px;  
+ margin-top:6px  
+}  
+  
+.progress{  
+ height:5px;  
+ background:#29334d;  
+ border-radius:10px;  
+ margin-top:10px;  
+ overflow:hidden  
+}  
+  
+.progress span{  
+ display:block;  
+ height:100%;  
+ background:white  
+}  
+  
+.small{  
+ color:#94a3b8;  
+ font-size:12px;  
+ line-height:1.5  
+}  
+  
+.buttons{  
+ display:flex;  
+ flex-wrap:wrap;  
+ margin-top:10px  
+}  
+  
+#unlockScreen{  
+ position:fixed;  
+ inset:0;  
+ background:#0b1020;  
+ display:flex;  
+ align-items:center;  
+ justify-content:center;  
+ padding:20px;  
+ z-index:10  
+}  
+  
+#unlockBox{  
+ max-width:420px;  
+ width:100%  
+}  
+  
+.notice{  
+ padding:12px;  
+ border-radius:10px;  
+ background:#1e293b;  
+ color:#cbd5e1;  
+ font-size:13px;  
+ margin:10px 0  
+}  
+</style>  </head>  <body>  <div id="unlockScreen">  
+ <div id="unlockBox" class="card">  
+  <h1>🔐 KeyGuard</h1>    <p class="subtitle">  
+   Your vault is encrypted locally.  
+  </p>    <div id="firstSetup">  
+   <p>Create a password to protect your KeyGuard vault.</p>  <input id="newPassword"  
+type="password"  
+placeholder="Create password">
+
+<input id="confirmPassword"  
+type="password"  
+placeholder="Confirm password">
+
+   <button class="primary" onclick="createVault()">  
+    Create encrypted vault  
+   </button>  
+  </div>    <div id="existingVault" class="hidden">  
+   <p>Enter your password to unlock your KeyGuard vault.</p>  <input id="unlockPassword"  
+type="password"  
+placeholder="Vault password">
+
+   <button class="primary" onclick="unlockVault()">  
+    Unlock KeyGuard  
+   </button>  
+  </div>    <div id="unlockMessage" class="small"></div>  
+ </div>  
+</div>  <div class="container">  <h1>🔐 KeyGuard</h1>  <p class="subtitle">  
+ Local TOTP authenticator  
+</p>  <div class="card">  <h2>Add account</h2>  <input id="issuer"  
+placeholder="Service e.g. Discord">
+
+<input id="account"  
+placeholder="Account name">
+
+<input id="secret"  
+placeholder="TOTP secret">
+
+<button class="primary" onclick="addAccount()">  
+ Add account  
+</button>  <button class="secondary" onclick="showQRInstructions()">  
+ 📷 QR scanner  
+</button>  <p class="small">  
+ TOTP secrets are encrypted before being stored locally.  
+</p>  </div>  <div class="card">  <h2>Backup</h2>  <p class="small">  
+ Export creates an encrypted KeyGuard backup file.  
+ You need your vault password to restore it.  
+</p>  <button class="secondary" onclick="exportBackup()">  
+ 💾 Export encrypted backup  
+</button>  <button class="secondary"  
+onclick="document.getElementById('backupFile').click()">
+📥 Import encrypted backup
+</button>
+
+<input id="backupFile"  
+type="file"  
+accept=".auth,.json"  
+style="display:none"  
+onchange="importBackup(event)">
+
+<button class="danger" onclick="lockVault()">  
+ 🔒 Lock KeyGuard  
+</button>  </div>  <div id="accounts"></div>  </div>  <script>  
+  
+/* =========================================================  
+   STORAGE  
+========================================================= */  
+  
+const VAULT_KEY = "keyguard_vault_v1";  
+  
+let vault = null;  
+let password = null;  
+let accounts = [];  
+  
+  
+/* =========================================================  
+   CRYPTO HELPERS  
+========================================================= */  
+  
+function randomBytes(length){  
+ return crypto.getRandomValues(new Uint8Array(length));  
+}  
+  
+  
+function bytesToBase64(bytes){  
+ let binary = "";  
+  
+ bytes.forEach(  
+  b => binary += String.fromCharCode(b)  
+ );  
+  
+ return btoa(binary);  
+}  
+  
+  
+function base64ToBytes(base64){  
+  
+ const binary = atob(base64);  
+  
+ const bytes =  
+ new Uint8Array(binary.length);  
+  
+ for(let i=0;i<binary.length;i++){  
+  bytes[i] = binary.charCodeAt(i);  
+ }  
+  
+ return bytes;  
+}  
+  
+  
+async function deriveKey(password,salt){  
+  
+ const material =  
+ await crypto.subtle.importKey(  
+  "raw",  
+  new TextEncoder().encode(password),  
+  "PBKDF2",  
+  false,  
+  ["deriveKey"]  
+ );  
+  
+ return crypto.subtle.deriveKey(  
+  {  
+   name:"PBKDF2",  
+   salt,  
+   iterations:310000,  
+   hash:"SHA-256"  
+  },  
+  material,  
+  {  
+   name:"AES-GCM",  
+   length:256  
+  },  
+  false,  
+  ["encrypt","decrypt"]  
+ );  
+  
+}  
+  
+  
+async function encryptData(data,key){  
+  
+ const iv =  
+ randomBytes(12);  
+  
+ const encrypted =  
+ await crypto.subtle.encrypt(  
+  {  
+   name:"AES-GCM",  
+   iv  
+  },  
+  key,  
+  new TextEncoder().encode(  
+   JSON.stringify(data)  
+  )  
+ );  
+  
+ return {  
+  iv:bytesToBase64(iv),  
+  
+  data:bytesToBase64(  
+   new Uint8Array(encrypted)  
+  )  
+ };  
+  
+}  
+  
+  
+async function decryptData(payload,key){  
+  
+ const decrypted =  
+ await crypto.subtle.decrypt(  
+  {  
+   name:"AES-GCM",  
+   iv:base64ToBytes(payload.iv)  
+  },  
+  key,  
+  base64ToBytes(payload.data)  
+ );  
+  
+ return JSON.parse(  
+  new TextDecoder().decode(decrypted)  
+ );  
+  
+}  
+  
+  
+/* =========================================================  
+   VAULT  
+========================================================= */  
+  
+async function createVault(){  
+  
+ const p =  
+ document.getElementById(  
+  "newPassword"  
+ ).value;  
+  
+ const confirm =  
+ document.getElementById(  
+  "confirmPassword"  
+ ).value;  
+  
+  
+ if(p.length < 10){  
+  
+  showUnlockMessage(  
+   "Use a password of at least 10 characters."  
+  );  
+  
+  return;  
+ }  
+  
+  
+ if(p !== confirm){  
+  
+  showUnlockMessage(  
+   "Passwords do not match."  
+  );  
+  
+  return;  
+ }  
+  
+  
+ const salt =  
+ randomBytes(16);  
+  
+  
+ const key =  
+ await deriveKey(  
+  p,  
+  salt  
+ );  
+  
+  
+ const encrypted =  
+ await encryptData(  
+  [],  
+  key  
+ );  
+  
+  
+ vault = {  
+  
+  version:1,  
+  
+  salt:  
+  bytesToBase64(  
+   salt  
+  ),  
+  
+  encrypted  
+  
+ };  
+  
+  
+ localStorage.setItem(  
+  VAULT_KEY,  
+  JSON.stringify(vault)  
+ );  
+  
+  
+ password = p;  
+ accounts = [];  
+  
+  
+ unlockScreen(false);  
+  
+ render();  
+  
+}  
+  
+  
+async function unlockVault(){  
+  
+ const p =  
+ document.getElementById(  
+  "unlockPassword"  
+ ).value;  
+  
+  
+ try{  
+  
+  const stored =  
+  JSON.parse(  
+   localStorage.getItem(  
+    VAULT_KEY  
+   )  
+  );  
+  
+  
+  const salt =  
+  base64ToBytes(  
+   stored.salt  
+  );  
+  
+  
+  const key =  
+  await deriveKey(  
+   p,  
+   salt  
+  );  
+  
+  
+  accounts =  
+  await decryptData(  
+   stored.encrypted,  
+   key  
+  );  
+  
+  
+  vault = stored;  
+  password = p;  
+  
+  
+  unlockScreen(false);  
+  
+  render();  
+  
+  
+ }catch{  
+  
+  showUnlockMessage(  
+   "Incorrect password or damaged vault."  
+  );  
+  
+ }  
+  
+}  
+  
+  
+async function saveVault(){  
+  
+ const salt =  
+ base64ToBytes(  
+  vault.salt  
+ );  
+  
+  
+ const key =  
+ await deriveKey(  
+  password,  
+  salt  
+ );  
+  
+  
+ vault.encrypted =  
+ await encryptData(  
+  accounts,  
+  key  
+ );  
+  
+  
+ localStorage.setItem(  
+  VAULT_KEY,  
+  JSON.stringify(vault)  
+ );  
+  
+}  
+  
+  
+function lockVault(){  
+  
+ password = null;  
+ accounts = [];  
+  
+  
+ document.getElementById(  
+  "unlockPassword"  
+ ).value = "";  
+  
+  
+ unlockScreen(true);  
+  
+}  
+  
+  
+function unlockScreen(show){  
+  
+ document.getElementById(  
+  "unlockScreen"  
+ ).style.display =  
+ show ? "flex" : "none";  
+  
+  
+ const exists =  
+ localStorage.getItem(  
+  VAULT_KEY  
+ );  
+  
+  
+ document.getElementById(  
+  "firstSetup"  
+ ).style.display =  
+ exists ? "none" : "block";  
+  
+  
+ document.getElementById(  
+  "existingVault"  
+ ).style.display =  
+ exists ? "block" : "none";  
+  
+}  
+  
+  
+function showUnlockMessage(message){  
+  
+ document.getElementById(  
+  "unlockMessage"  
+ ).textContent =  
+ message;  
+  
+}  
+  
+  
+/* =========================================================  
+   BASE32  
+========================================================= */  
+  
+function base32ToBytes(secret){  
+  
+ secret =  
+ secret  
+ .toUpperCase()  
+ .replace(/[\s-]/g,"")  
+ .replace(/=+$/,"");  
+  
+  
+ const alphabet =  
+ "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";  
+  
+  
+ let bits = "";  
+  
+  
+ for(const char of secret){  
+  
+  const value =  
+  alphabet.indexOf(char);  
+  
+  
+  if(value < 0){  
+  
+   throw new Error(  
+    "Invalid Base32 secret."  
+   );  
+  
+  }  
+  
+  
+  bits +=  
+  value  
+  .toString(2)  
+  .padStart(5,"0");  
+  
+ }  
+  
+  
+ const bytes = [];  
+  
+  
+ for(  
+  let i=0;  
+  i+8<=bits.length;  
+  i+=8  
+ ){  
+  
+  bytes.push(  
+   parseInt(  
+    bits.slice(i,i+8),  
+    2  
+   )  
+  );  
+  
+ }  
+  
+  
+ return new Uint8Array(bytes);  
+  
+}  
+  
+  
+/* =========================================================  
+   TOTP  
+========================================================= */  
+  
+function counterBytes(counter){  
+  
+ const buffer =  
+ new ArrayBuffer(8);  
+  
+  
+ const view =  
+ new DataView(buffer);  
+  
+  
+ view.setUint32(  
+ 0,  
+ Math.floor(  
+   counter / 0x100000000  
+  )  
+ );  
+  
+  
+ view.setUint32(  
+ 4,  
+ counter >>> 0  
+ );  
+  
+  
+ return buffer;  
+  
+}  
+  
+  
+async function hotp(secret,counter){  
+  
+ const key =  
+ await crypto.subtle.importKey(  
+  "raw",  
+  base32ToBytes(secret),  
+  {  
+   name:"HMAC",  
+   hash:"SHA-1"  
+  },  
+  false,  
+  ["sign"]  
+ );  
+  
+  
+ const signature =  
+ new Uint8Array(  
+  await crypto.subtle.sign(  
+   "HMAC",  
+   key,  
+   counterBytes(counter)  
+  )  
+ );  
+  
+  
+ const offset =  
+ signature[  
+  signature.length - 1  
+ ] & 15;  
+  
+  
+ const number =  
+ (  
+  ((signature[offset] & 127) << 24) |  
+  ((signature[offset+1] & 255) << 16) |  
+  ((signature[offset+2] & 255) << 8) |  
+  (signature[offset+3] & 255)  
+ );  
+  
+  
+ return String(  
+  number % 1000000  
+ ).padStart(  
+  6,  
+  "0"  
+ );  
+  
+}  
+  
+  
+async function generateCode(secret){  
+  
+ const counter =  
+ Math.floor(  
+  Date.now() / 1000 / 30  
+ );  
+  
+  
+ return hotp(  
+  secret,  
+  counter  
+ );  
+  
+}  
+  
+  
+/* =========================================================  
+   ACCOUNTS  
+========================================================= */  
+  
+async function addAccount(){  
+  
+ const issuer =  
+ document.getElementById(  
+  "issuer"  
+ ).value.trim();  
+  
+  
+ const account =  
+ document.getElementById(  
+  "account"  
+ ).value.trim();  
+  
+  
+ const secret =  
+ document.getElementById(  
+  "secret"  
+ ).value  
+ .trim()  
+ .replace(/\s+/g,"")  
+ .toUpperCase();  
+  
+  
+ if(!secret){  
+  
+  alert(  
+   "Enter a TOTP secret."  
+  );  
+  
+  return;  
+  
+ }  
+  
+  
+ try{  
+  
+  base32ToBytes(  
+   secret  
+  );  
+  
+ }catch(error){  
+  
+  alert(  
+   error.message  
+  );  
+  
+  return;  
+  
+ }  
+  
+  
+ accounts.push({  
+  
+  issuer,  
+  account,  
+  secret  
+  
+ });  
+  
+  
+ await saveVault();  
+  
+  
+ document.getElementById(  
+  "issuer"  
+ ).value = "";  
+  
+  
+ document.getElementById(  
+  "account"  
+ ).value = "";  
+  
+  
+ document.getElementById(  
+  "secret"  
+ ).value = "";  
+  
+  
+ render();  
+  
+}  
+  
+  
+async function deleteAccount(index){  
+  
+ if(  
+  !confirm(  
+   "Delete this account?"  
+  )  
+ ) return;  
+  
+  
+ accounts.splice(  
+  index,  
+  1  
+ );  
+  
+  
+ await saveVault();  
+  
+ render();  
+  
+}  
+  
+  
+/* =========================================================  
+   LOGOS  
+========================================================= */  
+  
+function getLogo(issuer){  
+  
+ const name =  
+ (issuer || "")  
+ .toLowerCase();  
+  
+  
+ if(name.includes("discord"))  
+  return "💬";  
+  
+  
+ if(name.includes("google"))  
+  return "🔵";  
+  
+  
+ if(name.includes("github"))  
+  return "🐙";  
+  
+  
+ if(name.includes("microsoft"))  
+  return "🪟";  
+  
+  
+ if(name.includes("apple"))  
+  return "";  
+  
+  
+ if(name.includes("amazon"))  
+  return "📦";  
+  
+  
+ if(  
+  name.includes("facebook") ||  
+  name.includes("meta")  
+ )  
+  return "Ⓜ️";  
+  
+  
+ return "🔐";  
+  
+}  
+  
+  
+/* =========================================================  
+   RENDER  
+========================================================= */  
+  
+async function render(){  
+  
+ const root =  
+ document.getElementById(  
+  "accounts"  
+ );  
+  
+  
+ if(accounts.length === 0){  
+  
+  root.innerHTML =  
+  `<div class="card">  
+   <p class="small">  
+    No accounts added yet.  
+   </p>  
+  </div>`;  
+  
+  
+  return;  
+  
+ }  
+  
+  
+ root.innerHTML =  
+ accounts.map(  
+ (a,i)=>`  
+  
+ <div class="card">  
+  
+  <div class="account">  
+  
+   <div class="logo">  
+    ${getLogo(a.issuer)}  
+   </div>  
+  
+   <div>  
+  
+    <div class="name">  
+     ${escapeHTML(  
+      a.account || "Account"  
+     )}  
+    </div>  
+  
+    <div class="issuer">  
+     ${escapeHTML(  
+      a.issuer || "KeyGuard"  
+     )}  
+    </div>  
+  
+   </div>  
+  
+  </div>  
+  
+  
+  <div  
+   class="code"  
+   id="code-${i}">  
+   ------  
+  </div>  
+  
+  
+  <div  
+   class="timer"  
+   id="timer-${i}">  
+   Loading...  
+  </div>  
+  
+  
+  <div class="progress">  
+   <span id="bar-${i}"></span>  
+  </div>  
+  
+  
+  <div class="buttons">  
+  
+   <button  
+    class="secondary"  
+    onclick="copyCode(${i})">  
+    📋 Copy  
+   </button>  
+  
+  
+   <button  
+    class="danger"  
+    onclick="deleteAccount(${i})">  
+    Delete  
+   </button>  
+  
+  </div>  
+  
+ </div>  
+  
+ `  
+ ).join("");  
+  
+  
+ await updateCodes();  
+  
+}  
+  
+  
+async function updateCodes(){  
+  
+ const seconds =  
+ Math.floor(  
+  Date.now() / 1000  
+ );  
+  
+  
+ const remaining =  
+ 30 - (seconds % 30);  
+  
+  
+ const percentage =  
+ remaining / 30 * 100;  
+  
+  
+ for(  
+  let i=0;  
+  i<accounts.length;  
+  i++  
+ ){  
+  
+  try{  
+  
+   const code =  
+   await generateCode(  
+    accounts[i].secret  
+   );  
+  
+  
+   const codeElement =  
+   document.getElementById(  
+    `code-${i}`  
+   );  
+  
+  
+   if(codeElement)  
+    codeElement.textContent =  
+    code;  
+  
+  
+   const timer =  
+   document.getElementById(  
+    `timer-${i}`  
+   );  
+  
+  
+   if(timer)  
+    timer.textContent =  
+    `Changes in ${remaining}s`;  
+  
+  
+   const bar =  
+   document.getElementById(  
+    `bar-${i}`  
+   );  
+  
+  
+   if(bar)  
+    bar.style.width =  
+    percentage + "%";  
+  
+  
+  }catch{}  
+  
+ }  
+  
+}  
+  
+  
+async function copyCode(index){  
+  
+ const code =  
+ await generateCode(  
+  accounts[index].secret  
+ );  
+  
+  
+ try{  
+  
+  await navigator.clipboard.writeText(  
+   code  
+  );  
+  
+  
+  alert(  
+   "Code copied."  
+  );  
+  
+  
+ }catch{  
+  
+  alert(  
+   "Copy failed. Your browser may block clipboard access."  
+  );  
+  
+ }  
+  
+}  
+  
+  
+function escapeHTML(text){  
+  
+ return String(text).replace(  
+  /[&<>"']/g,  
+  char => ({  
+   "&":"&amp;",  
+   "<":"&lt;",  
+   ">":"&gt;",  
+   '"':"&quot;",  
+   "'":"&#39;"  
+  }[char])  
+ );  
+  
+}  
+  
+  
+/* =========================================================  
+   ENCRYPTED BACKUP  
+========================================================= */  
+  
+async function exportBackup(){  
+  
+ if(!password){  
+  
+  alert(  
+   "Unlock the vault first."  
+  );  
+  
+  return;  
+  
+ }  
+  
+  
+ const backup =  
+ JSON.stringify(  
+  {  
+   type:"keyguard-backup",  
+   version:1,  
+   vault  
+  },  
+  null,  
+  2  
+ );  
+  
+  
+ const blob =  
+ new Blob(  
+  [backup],  
+  {  
+   type:"application/json"  
+  }  
+ );  
+  
+  
+ const url =  
+ URL.createObjectURL(  
+  blob  
+ );  
+  
+  
+ const link =  
+ document.createElement(  
+  "a"  
+ );  
+  
+  
+ link.href = url;  
+  
+  
+ link.download =  
+ "keyguard-backup.auth";  
+  
+  
+ link.click();  
+  
+  
+ URL.revokeObjectURL(  
+  url  
+ );  
+  
+}  
+  
+  
+async function importBackup(event){  
+  
+ const file =  
+ event.target.files[0];  
+  
+  
+ if(!file)  
+  return;  
+  
+  
+ try{  
+  
+  const text =  
+  await file.text();  
+  
+  
+  const imported =  
+  JSON.parse(  
+   text  
+  );  
+  
+  
+  if(  
+   imported.type !==  
+   "keyguard-backup"  
+  ){  
+  
+   throw new Error(  
+    "Invalid backup."  
+   );  
+  
+  }  
+  
+  
+  if(  
+   !confirm(  
+    "Importing will replace the current vault. Continue?"  
+   )  
+  )  
+   return;  
+  
+  
+  localStorage.setItem(  
+   VAULT_KEY,  
+   JSON.stringify(  
+    imported.vault  
+   )  
+  );  
+  
+  
+  alert(  
+   "Backup imported. Unlock it using the password that protected the backup."  
+  );  
+  
+  
+  location.reload();  
+  
+  
+ }catch(error){  
+  
+  alert(  
+   "Could not import backup."  
+  );  
+  
+ }  
+  
+  
+ event.target.value = "";  
+  
+}  
+  
+  
+/* =========================================================  
+   QR PLACEHOLDER  
+========================================================= */  
+  
+function showQRInstructions(){  
+  
+ alert(  
+  "QR scanning needs a QR-code library or the browser's BarcodeDetector API.\n\n" +  
+  "This version accepts TOTP secrets manually.\n\n" +  
+  "Next upgrade: scan standard otpauth:// QR codes and automatically fill the account."  
+ );  
+  
+}  
+  
+  
+/* =========================================================  
+   STARTUP  
+========================================================= */  
+  
+unlockScreen(  
+ !localStorage.getItem(  
+  VAULT_KEY  
+ )  
+);  
+  
+  
+if(  
+ localStorage.getItem(  
+  VAULT_KEY  
+ )  
+){  
+  
+ unlockScreen(true);  
+  
+}  
+  
+  
+setInterval(  
+ updateCodes,  
+ 1000  
+);  
+  
+</script>  </body>  
+</html>
